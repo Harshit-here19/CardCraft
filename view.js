@@ -6,7 +6,6 @@ fetch("templates.json")
     .then(res => res.json())
     .then(data => {
         templates = data.templates;
-        loadTemplateOptions();
     });
 
 function openDB() {
