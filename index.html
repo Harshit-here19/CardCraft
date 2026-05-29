@@ -9,14 +9,20 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7c3aed">
+
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500&family=Cinzel:wght@600&display=swap"
         rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500;700&family=Cinzel:wght@600&family=Cinzel+Decorative:wght@700&family=Inter:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@600&family=Playfair+Display:ital,wght@0,600;1,600&family=Bangers&family=Permanent+Marker&family=Anton&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500;700&family=Cinzel:wght@600&family=Cinzel+Decorative:wght@700&family=Inter:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@600&family=Playfair+Display:ital,wght@0,600;1,600&family=Bangers&family=Permanent+Marker&family=Anton&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gif.js.optimized/dist/gif.js"></script>
 </head>
 
 <body>
@@ -181,43 +187,44 @@
             </div>
 
             <div class="group">
-    <label>Font</label>
-    <select id="fontSelect">
-        <!-- Modern & Premium -->
-        <optgroup label="Modern & Premium">
-            <option value="Poppins">Poppins (Clean)</option>
-            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">SF Pro / System (iOS Default)</option>
-            <option value="'Inter', sans-serif">Inter (Sleek)</option>
-        </optgroup>
+                <label>Font</label>
+                <select id="fontSelect">
+                    <!-- Modern & Premium -->
+                    <optgroup label="Modern & Premium">
+                        <option value="Poppins">Poppins (Clean)</option>
+                        <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">SF Pro /
+                            System (iOS Default)</option>
+                        <option value="'Inter', sans-serif">Inter (Sleek)</option>
+                    </optgroup>
 
-        <!-- Gaming & Sci-Fi / Cyber -->
-        <optgroup label="Sci-Fi & Cyberpunk">
-            <option value="Orbitron">Orbitron (Futuristic)</option>
-            <option value="'Share Tech Mono', monospace">Share Tech Mono (Hacker)</option>
-            <option value="'Rajdhani', sans-serif">Rajdhani (Mecha)</option>
-        </optgroup>
+                    <!-- Gaming & Sci-Fi / Cyber -->
+                    <optgroup label="Sci-Fi & Cyberpunk">
+                        <option value="Orbitron">Orbitron (Futuristic)</option>
+                        <option value="'Share Tech Mono', monospace">Share Tech Mono (Hacker)</option>
+                        <option value="'Rajdhani', sans-serif">Rajdhani (Mecha)</option>
+                    </optgroup>
 
-        <!-- Traditional & Fantasy -->
-        <optgroup label="Fantasy & RPG">
-            <option value="Cinzel">Cinzel (Royal)</option>
-            <option value="'Cinzel Decorative', serif">Cinzel Decorative (Magic)</option>
-            <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
-        </optgroup>
+                    <!-- Traditional & Fantasy -->
+                    <optgroup label="Fantasy & RPG">
+                        <option value="Cinzel">Cinzel (Royal)</option>
+                        <option value="'Cinzel Decorative', serif">Cinzel Decorative (Magic)</option>
+                        <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
+                    </optgroup>
 
-        <!-- Shonen & Action -->
-        <optgroup label="Action & Manga">
-            <option value="'Bangers', sans-serif">Bangers (Comic/Manga)</option>
-            <option value="'Permanent Marker', cursive">Permanent Marker (Street/Fighter)</option>
-            <option value="'Anton', sans-serif">Anton (Impact Heavy)</option>
-        </optgroup>
+                    <!-- Shonen & Action -->
+                    <optgroup label="Action & Manga">
+                        <option value="'Bangers', sans-serif">Bangers (Comic/Manga)</option>
+                        <option value="'Permanent Marker', cursive">Permanent Marker (Street/Fighter)</option>
+                        <option value="'Anton', sans-serif">Anton (Impact Heavy)</option>
+                    </optgroup>
 
-        <!-- Retro & Tech -->
-        <optgroup label="Retro & Tech">
-            <option value="Monospace">System Monospace</option>
-            <option value="'Press Start 2P', cursive">Press Start 2P (8-Bit)</option>
-        </optgroup>
-    </select>
-</div>
+                    <!-- Retro & Tech -->
+                    <optgroup label="Retro & Tech">
+                        <option value="Monospace">System Monospace</option>
+                        <option value="'Press Start 2P', cursive">Press Start 2P (8-Bit)</option>
+                    </optgroup>
+                </select>
+            </div>
 
             <div class="group">
                 <label>Card Template</label>
@@ -228,6 +235,10 @@
             <div class="buttons">
 
                 <button id="flipCard">Flip Card</button>
+
+                <button id="saveLocal">Save Card</button>
+                <button id="loadCards">Gallery</button>
+
                 <button id="saveImage">Export PNG</button>
                 <button id="savePDF">Export PDF</button>
 

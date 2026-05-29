@@ -336,3 +336,18 @@ button:active {
   transform: none !important;
 }
 
+.gallery-card-wrapper {
+    width: 200px;
+    margin: 10px;
+    display: inline-block;
+}
+
+.mini-card {
+    transform: scale(0.4);
+    transform-origin: top left;
+    
+    width: 500px;   /* keep original layout width */
+    height: auto;
+
+    pointer-events: none; /* optional: prevents weird hover issues */
+}

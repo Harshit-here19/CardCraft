@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Card Gallery</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="gallery.css">
+</head>
+<body>
+
+<h1>Gallery</h1>
+
+<div class="toolbar">
+
+    <select id="filterTemplate">
+        <option value="all">All Templates</option>
+    </select>
+
+    <select id="filterRarity">
+        <option value="all">All Rarity</option>
+        <option>Common</option>
+        <option>Rare</option>
+        <option>Epic</option>
+        <option>Legendary</option>
+    </select>
+
+    <input id="filterSeries" placeholder="Filter by Series">
+
+</div>
+
+<div id="gallery" class="gallery-grid"></div>
+
+<script src="gallery.js" defer></script>
+
+</body>
+</html>

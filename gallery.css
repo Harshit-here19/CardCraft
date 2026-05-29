@@ -1,0 +1,33 @@
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    padding: 20px;
+}
+
+/* CARD BASE */
+.gallery-card-wrapper {
+    position: relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+
+/* HOVER ZOOM */
+.gallery-card-wrapper:hover {
+    transform: scale(1.08);
+    z-index: 10;
+}
+
+/* GLOW EFFECT */
+.gallery-card-wrapper:hover .anime-card {
+    box-shadow: 0 0 25px rgba(0,255,255,0.6),
+                0 0 60px rgba(0,255,255,0.3);
+}
+
+/* MINI CARD */
+.mini-card {
+    transform: scale(0.45);
+    transform-origin: top left;
+    width: 500px;
+    pointer-events: none;
+}

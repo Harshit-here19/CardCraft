@@ -1,0 +1,87 @@
+.view-card {
+    width: 360px;
+    height: 40rem;
+    margin: 60px auto;
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    color: white;
+    transform: scale(1);
+    opacity: 1;
+    /* animation: popIn 0.5s ease forwards; */
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+.view-img {
+    width: 100%;
+    height: 18rem;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: gold;
+    color: black;
+    margin: 10px 0;
+}
+
+.desc,
+.abilities {
+    max-height: 10rem;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+@keyframes heroEnter {
+    0% {
+        transform: scale(0.6) translateY(40px);
+        opacity: 0;
+        filter: blur(12px);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+.view-card {
+    animation: heroEnter 0.5s ease-out;
+}
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+}
+
+/* .animate-in {
+    animation: netflixPop 0.5s ease-out;
+} */
+
+.meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        "role role"
+        "species gender";
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+/* Assign each element to its area */
+.meta p:nth-child(1) { grid-area: role; }
+.meta p:nth-child(2) { grid-area: species; }
+.meta p:nth-child(3) { grid-area: gender; }
