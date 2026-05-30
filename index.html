@@ -34,24 +34,29 @@
 
             <h2>Card Editor</h2>
 
-            <div class="group">
-                <label>Name</label>
-                <input type="text" id="name">
-            </div>
+            <div class="profileFormGroup">
+                <div class="formField">
+                    <label class="formLabel" for="name">Name</label>
+                    <input type="text" id="name" autocomplete="off" placeholder="Enter name to expand..."
+                        onfocus="expandForm()" oninput="expandForm()">
+                </div>
 
-            <div class="group">
-                <label>Series</label>
-                <input type="text" id="series">
-            </div>
+                <div class="conditionalFields" id="extraFields">
+                    <div class="formField">
+                        <label class="formLabel" for="series">Series</label>
+                        <input type="text" id="series">
+                    </div>
 
-            <div class="group">
-                <label>Role</label>
-                <input type="text" id="role">
-            </div>
+                    <div class="formField">
+                        <label class="formLabel" for="role">Role</label>
+                        <input type="text" id="role">
+                    </div>
 
-            <div class="group">
-                <label>Description</label>
-                <textarea id="desc"></textarea>
+                    <div class="formField">
+                        <label class="formLabel" for="desc">Description</label>
+                        <textarea id="desc" rows="3"></textarea>
+                    </div>
+                </div>
             </div>
 
             <div class="group">
@@ -77,6 +82,18 @@
                     <option>Epic</option>
                     <option>Legendary</option>
                 </select>
+            </div>
+
+            <div class="buttons">
+                <div class="groupBox">
+                    <button id="saveLocal">Save Card</button>
+                    <button id="flipCard">Flip Card</button>
+                </div>
+
+                <div class="groupBox">
+                    <button id="saveImage">Export PNG</button>
+                    <button id="savePDF">Export PDF</button>
+                </div>
             </div>
 
         </div>
@@ -143,6 +160,8 @@
 
                         </div>
 
+
+
                     </div>
 
                 </div>
@@ -156,34 +175,53 @@
 
             <h2>Customization</h2>
 
-            <div class="group">
-                <label>Upload Image</label>
-                <input type="file" id="upload">
+            <div class="groupBoxImg">
+                <div class="slide active" id="slide-0">
+                    <label class="group-title">Upload Image</label>
+                    <input type="file" id="upload" accept="image/*" style="display: none;">
+                    <label for="upload" class="minimal-upload-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                        <span>Choose a file...</span>
+                    </label>
+                </div>
+
+                <div class="slide" id="slide-1">
+                    <label class="group-title" for="imageUrl">Image URL</label>
+                    <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="page-controls">
+                    <span class="dot active" onclick="switchSlide(0)"></span>
+                    <span class="dot" onclick="switchSlide(1)"></span>
+                </div>
             </div>
 
-            <div class="group">
-                <label>Image URL</label>
-                <input type="text" id="imageUrl">
+            <div class="colorBoxGroup">
+                <div class="colorRow">
+                    <label class="colorLabel" for="color1">Gradient 1</label>
+                    <input type="color" id="color1" value="#DC143C">
+                </div>
+
+                <div class="colorRow">
+                    <label class="colorLabel" for="color2">Gradient 2</label>
+                    <input type="color" id="color2" value="#8B0000">
+                </div>
             </div>
 
-            <div class="group">
-                <label>Gradient 1</label>
-                <input type="color" id="color1" value="#ff512f">
-            </div>
+            <div class="colorBoxGroup">
+                <div class="colorRow">
+                    <label class="colorLabel" for="textColor">Text Color</label>
+                    <input type="color" id="textColor" value="#ffffff">
+                </div>
 
-            <div class="group">
-                <label>Gradient 2</label>
-                <input type="color" id="color2" value="#dd2476">
-            </div>
-
-            <div class="group">
-                <label>Text Color</label>
-                <input type="color" id="textColor" value="#ffffff">
-            </div>
-
-            <div class="group">
-                <label>Border Color</label>
-                <input type="color" id="borderColor" value="#ffd700">
+                <div class="colorRow">
+                    <label class="colorLabel" for="borderColor">Border Color</label>
+                    <input type="color" id="borderColor" value="#ffffff">
+                </div>
             </div>
 
             <div class="group">
@@ -234,13 +272,7 @@
 
             <div class="buttons">
 
-                <button id="flipCard">Flip Card</button>
-
-                <button id="saveLocal">Save Card</button>
                 <button id="loadCards">Gallery</button>
-
-                <button id="saveImage">Export PNG</button>
-                <button id="savePDF">Export PDF</button>
 
             </div>
 

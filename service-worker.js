@@ -21,30 +21,33 @@ self.addEventListener("install", event => {
 
 self.addEventListener("fetch", event => {
 
+  if (event.request.method !== "GET") {
+    return;
+  }
+
+  const url = new URL(event.request.url);
+
+  if (
+    url.protocol !== "http:" &&
+    url.protocol !== "https:"
+  ) {
+    return;
+  }
+
   event.respondWith(
-
     caches.match(event.request)
-      .then(response => {
-
-        return response || fetch(event.request)
+      .then(res => {
+        return res || fetch(event.request)
           .then(fetchRes => {
 
-            return caches.open(CACHE_NAME)
-              .then(cache => {
+            const clone = fetchRes.clone();
 
-                cache.put(
-                  event.request,
-                  fetchRes.clone()
-                );
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(event.request, clone));
 
-                return fetchRes;
-
-              });
-
+            return fetchRes;
           });
-
       })
-
   );
 
 });

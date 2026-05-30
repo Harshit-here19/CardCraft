@@ -2,6 +2,63 @@
 /* style.css */
 /* ========================= */
 
+html,
+body {
+    /* 1. The Magic Key: Forces iOS momentum-style physics */
+    scroll-behavior: smooth;
+
+    /* 2. Allows native elastic rubber-band bouncing effect when reaching top/bottom */
+    overscroll-behavior: bounce;
+
+    /* 3. Hardware acceleration: Ensures smooth 60/120fps scrolling on heavy pages */
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+}
+
+body {
+    /* 4. Fixes safari text rendering jitter during fast scrolls */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===================================================
+   iOS Premium Minimalist Scrollbars (Webkit-based)
+   =================================================== */
+
+/* Width and track configurations */
+::-webkit-scrollbar {
+    width: 8px;
+    /* Vertical scrollbar width */
+    height: 8px;
+    /* Horizontal scrollbar height */
+}
+
+/* The scrollbar track is completely transparent in iOS */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* The actual draggable thumb handle */
+::-webkit-scrollbar-thumb {
+    /* Apple uses a semi-translucent dark grey pill that blends into backgrounds */
+    /* background-color: rgba(0, 0, 0, 0.25); */
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 100px;
+    /* Perfect iOS pill rounded caps */
+
+    /* Create an invisible inner border padding to make the thumb look thin and floaty */
+    border: 2px solid transparent;
+    background-clip: padding-box;
+
+    transition: background-color 0.2s ease;
+}
+
+/* Micro-interaction: Thumb darkens naturally when you hover over it */
+::-webkit-scrollbar-thumb:hover {
+    /* background-color: rgba(0, 0, 0, 0.45); */
+    background-color: rgba(255, 255, 255, 0.45);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -107,6 +164,32 @@ button:active {
     transform: scale(0.97);
 }
 
+/* Inverted button inside .groupBox */
+.groupBox button {
+    background: rgba(0, 122, 255, 0.1);
+    /* 10% opacity system blue */
+    color: #007aff;
+    border: none;
+    /* No ugly borders */
+
+    /* Smooth iOS-like spring animation */
+    transition: background 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.2s ease;
+
+    width: 7.5rem;
+}
+
+.groupBox button:hover {
+    background: rgba(0, 122, 255, 0.18);
+    /* Deepens slightly on hover */
+    /* Scales 1.02 automatically from your base style */
+}
+
+.groupBox button:active {
+    background: rgba(0, 122, 255, 0.25);
+    /* Darkens further when pressed */
+    /* Scales 0.97 automatically from your base style */
+}
+
 /* CARD AREA */
 
 .card-section {
@@ -122,10 +205,10 @@ button:active {
     position: relative;
     overflow: hidden;
     transition: 0.15s;
-    border: 4px solid gold;
+    border: 4px solid white;
     padding: 25px;
     background:
-        linear-gradient(135deg, #ff512f, #dd2476);
+        linear-gradient(135deg, #DC143C, #8B0000);
     box-shadow:
         0 0 50px rgba(0, 0, 0, 0.6),
         inset 0 0 30px rgba(255, 255, 255, 0.1);
@@ -170,10 +253,17 @@ button:active {
 
 .card-header h1 {
     font-size: 32px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 65%;
 }
 
 .card-header p {
     opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* IMAGE */
@@ -328,12 +418,12 @@ button:active {
 
 }
 
-.export-mode .card-inner{
-  transform: none !important;
+.export-mode .card-inner {
+    transform: none !important;
 }
 
-.export-mode .anime-card{
-  transform: none !important;
+.export-mode .anime-card {
+    transform: none !important;
 }
 
 .gallery-card-wrapper {
@@ -345,9 +435,352 @@ button:active {
 .mini-card {
     transform: scale(0.4);
     transform-origin: top left;
-    
-    width: 500px;   /* keep original layout width */
+
+    width: 500px;
+    /* keep original layout width */
     height: auto;
 
-    pointer-events: none; /* optional: prevents weird hover issues */
+    pointer-events: none;
+    /* optional: prevents weird hover issues */
+}
+
+.groupBox {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* ===================================================
+   Main Card Container
+   =================================================== */
+.groupBoxImg {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    height: 125px;
+    /* Bumped slightly to perfectly frame everything */
+    padding: 16px;
+    background: #1c1c1e;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* ===================================================
+   Fading Slide Behavior & Frame Isolation
+   =================================================== */
+.slide {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    /* Explicitly lock the height of the interactive area 
+       so it never stretches down to touch the dots */
+    height: 72px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+/* Bring active slide to life */
+.slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+/* ===================================================
+   Inputs Layout Configuration (Forced 42px standard)
+   =================================================== */
+.minimal-upload-box,
+#imageUrl {
+    width: 100%;
+    height: 42px;
+    /* Standard iOS compact form height */
+    box-sizing: border-box;
+    border-radius: 10px;
+    background: #2c2c2e;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.minimal-upload-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border: 1px dashed #48484a;
+    color: #aeaeb2;
+    cursor: pointer;
+}
+
+/* Fix SVG sizing issues causing deformations */
+.minimal-upload-box svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    /* Prevents the icon from bending out of shape */
+}
+
+#imageUrl {
+    padding: 0 14px;
+    color: #ffffff;
+    border: 1px solid transparent;
+    outline: none;
+}
+
+#imageUrl::placeholder {
+    color: #636366;
+}
+
+/* Interactive States */
+.minimal-upload-box:hover {
+    background: #3a3a3c;
+    border-color: #007aff;
+    color: #ffffff;
+}
+
+#imageUrl:focus {
+    border-color: #007aff;
+}
+
+.group-title {
+    font-family: -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===================================================
+   iOS Page Indicator Dots (Isolated Safety Zone)
+   =================================================== */
+.page-controls {
+    position: absolute;
+    bottom: 12px;
+    /* Absolute bottom alignment */
+    left: 0;
+    right: 0;
+    height: 14px;
+    /* Creates a clean hitting box exclusively for clicks */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    /* Forces the dots to layer on top of everything else */
+}
+
+.dot {
+    width: 7px;
+    height: 7px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.dot.active {
+    background: #ffffff;
+    width: 16px;
+    border-radius: 4px;
+}
+
+/* ===================================================
+   Main Group Container
+   =================================================== */
+.colorBoxGroup {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 360px;
+    background: #1c1c1e;
+    /* Apple System Background Secondary */
+    border-radius: 14px;
+    padding: 4px 16px;
+    /* Let rows handle vertical space natively */
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    /* Spacing between the two separate box units */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Individual rows pairing label + picker */
+.colorRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Pushes text to left, color to right */
+    padding: 14px 0;
+    width: 100%;
+}
+
+/* Creates a clean divider line between internal items, mimicking iOS Settings rows */
+.colorRow:not(:last-child) {
+    border-bottom: 1px solid #2c2c2e;
+}
+
+/* Row Labels */
+.colorLabel {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    user-select: none;
+    cursor: pointer;
+}
+
+/* ===================================================
+   Ultra-Minimal Color Picker Override
+   =================================================== */
+.colorRow input[type="color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    /* Sleek rectangle sizing */
+    width: 44px;
+    height: 26px;
+    padding: 0;
+    transition: transform 0.15s ease;
+}
+
+/* Visual interaction feedback */
+.colorRow input[type="color"]:hover {
+    transform: scale(1.05);
+}
+
+.colorRow input[type="color"]:active {
+    transform: scale(0.95);
+}
+
+/* Chrome/Safari Internal swatch architecture adjustment */
+.colorRow input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.colorRow input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+    /* Soft edge rounded rectangle look */
+}
+
+/* Firefox Internal swatch architecture adjustment */
+.colorRow input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+/* ===================================================
+   Form Layout Configuration
+   =================================================== */
+.profileFormGroup {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    background: #1c1c1e;
+    /* Apple System Background Secondary */
+    border-radius: 16px;
+    padding: 16px;
+    box-sizing: border-box;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.formField {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.formLabel {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8e8e93;
+    /* iOS Label Gray */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===================================================
+   Input and Textarea Uniform Aesthetics
+   =================================================== */
+.profileFormGroup input[type="text"],
+.profileFormGroup textarea {
+    width: 100%;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    background: #2c2c2e;
+    color: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-family: -apple-system, sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.profileFormGroup textarea {
+    resize: none;
+    /* Keeps layout structural and stable */
+}
+
+/* Interactive focus glow */
+.profileFormGroup input:focus,
+.profileFormGroup textarea:focus {
+    border-color: #007aff;
+}
+
+/* ===================================================
+   The Reveal Mechanic (Max-Height Transition)
+   =================================================== */
+.conditionalFields {
+    /* 1. Take it out of the layout flow completely */
+    position: absolute;
+    top: calc(100% + 8px);
+    /* Sits exactly 8px below the main box */
+    left: 0;
+    right: 0;
+    z-index: 99;
+    /* Higher layer priority so it floats above other text/buttons */
+
+    /* 2. Style it like an elevated iOS menu card */
+    background: #1c1c1e;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    /* 3. Initial Animation States (Hidden + Shrunk down) */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(0.95) translateY(-10px);
+
+    /* Native Apple system menu pop-in curve */
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.2s;
+}
+
+/* 4. Active popover transition override */
+.conditionalFields.expanded {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: scale(1) translateY(0);
+    /* Snaps smoothly into full focus */
 }

@@ -1,6 +1,7 @@
 const dbName = "CardCraftDB";
 
 let templates = [];
+let currentCard = null;
 
 fetch("templates.json")
     .then(res => res.json())
@@ -33,6 +34,8 @@ async function loadView() {
     req.onsuccess = () => {
         const card = req.result;
         if (!card) return;
+
+        currentCard = card;
 
         const template = templates.find(t => t.id === card.templateId);
 
@@ -67,10 +70,6 @@ async function loadView() {
                 ${card.desc || ""}
             </div>
 
-            <div class="abilities">
-                ${card.abilities || ""}
-            </div>
-
         </div>
     `;
     };
@@ -79,5 +78,47 @@ async function loadView() {
 loadView();
 
 document.getElementById("backBtn").addEventListener("click", () => {
-    window.location.href = "./gallery.html";
+    window.location.href = "gallery.html";
 });
+
+function exportCurrentCard() {
+
+    if (!currentCard) {
+        alert("Card not loaded yet.");
+        return;
+    }
+
+    const exportData = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        card: currentCard
+    };
+
+    const blob = new Blob(
+        [JSON.stringify(exportData, null, 2)],
+        { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    const safeName = currentCard.name
+        .replace(/[^a-z0-9]/gi, "_");
+
+    a.download = `${safeName}.cardcraft`;
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+document.getElementById("exportBtn")
+    .addEventListener(
+        "click",
+        exportCurrentCard
+    );

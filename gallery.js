@@ -90,7 +90,6 @@ function renderCard(cardData) {
 
             <div class="content">
                 <h3>${cardData.role}</h3>
-                <p>${cardData.desc}</p>
             </div>
         </div>
     `;
@@ -136,4 +135,136 @@ function populateFilters(cards) {
         opt.textContent = id;
         select.appendChild(opt);
     });
+}
+
+document.getElementById("backBtn").addEventListener("click", () => {
+    window.location.href = "index.html";
+});
+
+async function exportCards() {
+
+    const db = await openDB();
+
+    const tx = db.transaction(storeName, "readonly");
+    const store = tx.objectStore(storeName);
+
+    const req = store.getAll();
+
+    req.onsuccess = () => {
+
+        const data = JSON.stringify(req.result, null, 2);
+
+        const blob = new Blob(
+            [data],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "export.cardcraft";
+        a.click();
+
+        URL.revokeObjectURL(url);
+    };
+}
+
+document.getElementById("exportBtn")
+    .addEventListener("click", exportCards);
+
+document.getElementById("importFile")
+    .addEventListener("change", importCards);
+
+async function importCards(e) {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const text = await file.text();
+
+    // const cards = JSON.parse(text);
+    let cards = JSON.parse(text);
+
+    if (!Array.isArray(cards)) {
+        cards = cards.card ? [cards.card] : [cards];
+    }
+
+    const db = await openDB();
+
+    // Get existing cards
+    const existingCards = await new Promise((resolve, reject) => {
+
+        const tx = db.transaction(storeName, "readonly");
+        const store = tx.objectStore(storeName);
+
+        const req = store.getAll();
+
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+
+    });
+
+    const skippedCards = [];
+
+    const tx = db.transaction(storeName, "readwrite");
+    const store = tx.objectStore(storeName);
+
+    cards.forEach(card => {
+
+        const duplicate = existingCards.some(existing => {
+
+            return (
+                (existing.name || "").trim().toLowerCase() ===
+                (card.name || "").trim().toLowerCase()
+
+                &&
+
+                (existing.series || "").trim().toLowerCase() ===
+                (card.series || "").trim().toLowerCase()
+
+                &&
+
+                (existing.role || "").trim().toLowerCase() ===
+                (card.role || "").trim().toLowerCase()
+            );
+
+        });
+
+        if (duplicate) {
+
+            skippedCards.push(
+                `${card.name} (${card.series} - ${card.role})`
+            );
+
+        } else {
+
+            store.put(card);
+
+            // Prevent duplicates within the same imported file
+            existingCards.push(card);
+
+        }
+
+    });
+
+    tx.oncomplete = () => {
+
+        let message = "Cards imported successfully!";
+
+        if (skippedCards.length > 0) {
+
+            message +=
+                "\n\nDuplicate cards not added:\n\n" +
+                skippedCards.join("\n");
+
+        }
+
+        alert(message);
+
+        loadGallery();
+
+    };
+
 }
