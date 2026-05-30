@@ -18,6 +18,22 @@
     animation: heroEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.card-header h1 {
+    font-size: 32px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 65%;
+}
+
+.card-header p {
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
 /* Fluid Apple System Entrance Animation */
 @keyframes heroEnter {
     0% {

@@ -253,17 +253,10 @@ button:active {
 
 .card-header h1 {
     font-size: 32px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 65%;
 }
 
 .card-header p {
     opacity: 0.8;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* IMAGE */
@@ -689,8 +682,7 @@ button:active {
     position: relative;
     width: 100%;
     max-width: 360px;
-    background: #1c1c1e;
-    /* Apple System Background Secondary */
+    background: #1c1c1e; /* Apple System Background Secondary */
     border-radius: 16px;
     padding: 16px;
     box-sizing: border-box;
@@ -707,8 +699,7 @@ button:active {
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 12px;
     font-weight: 600;
-    color: #8e8e93;
-    /* iOS Label Gray */
+    color: #8e8e93; /* iOS Label Gray */
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -716,7 +707,7 @@ button:active {
 /* ===================================================
    Input and Textarea Uniform Aesthetics
    =================================================== */
-.profileFormGroup input[type="text"],
+.profileFormGroup input[type="text"], 
 .profileFormGroup textarea {
     width: 100%;
     padding: 12px 14px;
@@ -732,12 +723,11 @@ button:active {
 }
 
 .profileFormGroup textarea {
-    resize: none;
-    /* Keeps layout structural and stable */
+    resize: none; /* Keeps layout structural and stable */
 }
 
 /* Interactive focus glow */
-.profileFormGroup input:focus,
+.profileFormGroup input:focus, 
 .profileFormGroup textarea:focus {
     border-color: #007aff;
 }
@@ -748,15 +738,13 @@ button:active {
 .conditionalFields {
     /* 1. Take it out of the layout flow completely */
     position: absolute;
-    top: calc(100% + 8px);
-    /* Sits exactly 8px below the main box */
+    top: calc(100% + 8px); /* Sits exactly 8px below the main box */
     left: 0;
     right: 0;
-    z-index: 99;
-    /* Higher layer priority so it floats above other text/buttons */
-
+    z-index: 99; /* Higher layer priority so it floats above other text/buttons */
+    
     /* 2. Style it like an elevated iOS menu card */
-    background: #1c1c1e;
+    background: #1c1c1e; 
     border-radius: 16px;
     padding: 16px;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -769,11 +757,11 @@ button:active {
     visibility: hidden;
     pointer-events: none;
     transform: scale(0.95) translateY(-10px);
-
+    
     /* Native Apple system menu pop-in curve */
     transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-        visibility 0.2s;
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.2s;
 }
 
 /* 4. Active popover transition override */
@@ -781,6 +769,5 @@ button:active {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transform: scale(1) translateY(0);
-    /* Snaps smoothly into full focus */
+    transform: scale(1) translateY(0); /* Snaps smoothly into full focus */
 }
