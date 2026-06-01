@@ -62,6 +62,9 @@ function renderCard(cardData) {
 
     const template = templates.find(t => t.id === cardData.templateId);
 
+    // console.log(template?.background)
+    // console.log(cardData.colors.color1)
+
     const wrapper = document.createElement("div");
     wrapper.className = "gallery-card-wrapper";
 
@@ -71,12 +74,17 @@ function renderCard(cardData) {
 
     wrapper.innerHTML = `
         <div class="anime-card mini-card" style="
-            background:${template?.background};
+            background: ${ cardData?.backgroundImage 
+                ? `url(${cardData.backgroundImage}) center/cover no-repeat`
+                : cardData?.colors?.color1 
+                ? `linear-gradient(135deg, ${cardData.colors.color1}, ${cardData?.colors?.color2 || cardData.colors.color1})` 
+                : template?.background};
             color:${template?.textColor};
             border-color:${template?.borderColor};
             font-family:${template?.font};
             box-shadow:${template?.cardShadow};
         ">
+            <div class="shine"></div>
             <div class="rarity">${cardData.rarity || "Common"}</div>
 
             <div class="card-header">
@@ -94,11 +102,11 @@ function renderCard(cardData) {
         </div>
     `;
 
-    wrapper.addEventListener("click", () => {
-        window.location.href = `view.html?id=${cardData.id}`;
-    });
+wrapper.addEventListener("click", () => {
+    window.location.href = `view.html?id=${cardData.id}`;
+});
 
-    return wrapper;
+return wrapper;
 }
 
 function applyFilters() {

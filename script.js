@@ -9,6 +9,7 @@ const container = document.getElementById("cardContainer");
 
 // In Deployement Enables this 
 let templates = [];
+let backgroundImage = null;
 
 fetch("templates.json")
     .then(res => res.json())
@@ -113,6 +114,8 @@ document.getElementById("upload")
                 document.getElementById("cardImage")
                     .src = e.target.result;
 
+                document.getElementById("dropArea").classList.add("has-image");
+
             };
 
             reader.readAsDataURL(file);
@@ -126,21 +129,22 @@ document.getElementById("upload")
 /* ========================= */
 
 document.getElementById("imageUrl")
-.addEventListener("input", async (e) => {
+    .addEventListener("input", async (e) => {
 
-    const url = e.target.value.trim();
-    if (!url) return;
+        const url = e.target.value.trim();
+        if (!url) return;
 
-    // convert URL → base64
-    const res = await fetch(url);
-    const blob = await res.blob();
+        // convert URL → base64
+        const res = await fetch(url);
+        const blob = await res.blob();
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-        document.getElementById("cardImage").src = reader.result;
-    };
-    reader.readAsDataURL(blob);
-});
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            document.getElementById("cardImage").src = reader.result;
+            document.getElementById("dropArea").classList.add("has-image");
+        };
+        reader.readAsDataURL(blob);
+    });
 /* ========================= */
 /* DRAG & DROP */
 /* ========================= */
@@ -184,6 +188,8 @@ dropArea.addEventListener("drop", e => {
             document.getElementById("cardImage")
                 .src = ev.target.result;
 
+            document.getElementById("dropArea").classList.add("has-image");
+
         };
 
         reader.readAsDataURL(file);
@@ -207,9 +213,26 @@ function updateColors() {
     const gradient =
         `linear-gradient(135deg, ${c1}, ${c2})`;
 
-    card.style.background = gradient;
+    if (backgroundImage) {
 
-    cardBack.style.background = gradient;
+        card.style.backgroundImage =
+            `url(${backgroundImage})`;
+
+        cardBack.style.backgroundImage =
+            `url(${backgroundImage})`;
+
+        card.style.backgroundSize = "cover";
+        cardBack.style.backgroundSize = "cover";
+
+        card.style.backgroundPosition = "center";
+        cardBack.style.backgroundPosition = "center";
+
+    } else {
+
+        card.style.background = gradient;
+        cardBack.style.background = gradient;
+
+    }
 
 }
 
@@ -312,9 +335,14 @@ document.getElementById("flipCard")
 function prepareExport() {
 
     const inner = document.getElementById("cardInner");
+    const shine = document.getElementsByClassName('shine')[0]
 
     // remove flip + 3D transforms temporarily
     inner.classList.remove("flipped");
+   
+    if (shine) {
+        shine.style.display = "none"; // Completely hide it from the DOM renderer
+    }
 
     inner.style.transform = "none";
 
@@ -323,8 +351,13 @@ function prepareExport() {
 function restoreAfterExport() {
 
     const inner = document.getElementById("cardInner");
+    const shine = document.getElementsByClassName('shine')[0]
 
     inner.style.transform = "";
+    
+    if (shine) {
+        shine.style.display = ""; // Restores it back to block/flex/absolute automatically
+    }
 
 }
 
@@ -337,355 +370,422 @@ document.getElementById("saveImage")
 
         prepareExport();
 
-        const canvas = await html2canvas(
-            document.getElementById("cardFront") || document.getElementById("card"),
-            {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: null
+        // Give the browser one frame to hide the shine and reset transforms
+        requestAnimationFrame(async () => {
+            try {
+                const canvas = await html2canvas(
+                    document.getElementById("cardFront") || document.getElementById("card"),
+                    {
+                        scale: 2,
+                        useCORS: true,
+                        // allowTaint: false, // Strict CORS enforcement
+                        backgroundColor: null
+                    }
+                );
+
+                const link = document.createElement("a");
+                const name = document.getElementById("name").value.trim() || "anime-card";
+
+                link.download = `${name}-front.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+
+            } catch (error) {
+                console.error("Export failed:", error);
+            } finally {
+                // Always restore the card state, even if it fails
+                restoreAfterExport();
             }
-        );
+        })
 
-        const link = document.createElement("a");
-
-        const name =
-            document.getElementById("name").value.trim() || "anime-card";
-
-        link.download = `${name}-front.png`;
-        link.href = canvas.toDataURL("image/png");
-
-        link.click();
-
-        restoreAfterExport();
-
-    });
-
-/* ========================= */
-/* EXPORT PDF */
-/* ========================= */
-
-document.getElementById("savePDF")
-    .addEventListener("click", async () => {
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF("p", "mm", "a4");
-
-        const name =
-            document.getElementById("name").value.trim() || "anime-card";
-
-        const body = document.body;
-
-        // 🔥 ENTER SAFE MODE (THIS IS THE KEY FIX)
-        body.classList.add("export-mode");
-
-        const cardFront = document.getElementById("card");
-        const cardBack = document.getElementById("cardBack");
-
-        // backup original visibility
-        const frontDisplay = cardFront.style.display;
-        const backDisplay = cardBack.style.display;
-
-        /* ================= FRONT ================= */
-
-        cardFront.style.display = "block";
-        cardBack.style.display = "none";
-
-        await new Promise(r => setTimeout(r, 150));
-
-        const frontCanvas = await html2canvas(cardFront, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: null
         });
 
-        pdf.addImage(frontCanvas.toDataURL("image/png"), "PNG", 15, 15, 180, 260);
+        /* ========================= */
+        /* EXPORT PDF */
+        /* ========================= */
 
-        pdf.addPage();
+        document.getElementById("savePDF")
+            .addEventListener("click", async () => {
 
-        /* ================= BACK ================= */
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF("p", "mm", "a4");
 
-        cardFront.style.display = "none";
-        cardBack.style.display = "block";
+                const name =
+                    document.getElementById("name").value.trim() || "anime-card";
 
-        await new Promise(r => setTimeout(r, 150));
+                const body = document.body;
 
-        const backCanvas = await html2canvas(cardBack, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: null
-        });
+                // 🔥 ENTER SAFE MODE (THIS IS THE KEY FIX)
+                body.classList.add("export-mode");
 
-        pdf.addImage(backCanvas.toDataURL("image/png"), "PNG", 15, 15, 180, 260);
+                const cardFront = document.getElementById("card");
+                const cardBack = document.getElementById("cardBack");
 
-        /* ================= RESTORE ================= */
+                // backup original visibility
+                const frontDisplay = cardFront.style.display;
+                const backDisplay = cardBack.style.display;
 
-        cardFront.style.display = frontDisplay;
-        cardBack.style.display = backDisplay;
+                /* ================= FRONT ================= */
 
-        body.classList.remove("export-mode");
+                cardFront.style.display = "block";
+                cardBack.style.display = "none";
 
-        pdf.save(`${name}.pdf`);
+                await new Promise(r => setTimeout(r, 150));
 
-    });
-
-/* ========================= */
-/* INITIAL HIDE EMPTY FIELDS */
-/* ========================= */
-
-Object.keys(fields).forEach(id => {
-
-    const target =
-        document.getElementById(fields[id]);
-
-    if (target) {
-
-        target.style.display = "none";
-
-    }
-
-});
-
-/* ========================= */
-/* DEFAULT CARD NAME */
-/* ========================= */
-
-document.getElementById("cardName")
-    .style.display = "block";
-
-document.getElementById("backName")
-    .style.display = "block";
-
-
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", () => {
-
-        navigator.serviceWorker.register("./service-worker.js")
-            .then(() => {
-                console.log("PWA Ready");
-            });
-
-    });
-
-}
-
-function getCardState() {
-    return {
-        name: document.getElementById("name").value,
-        series: document.getElementById("series").value,
-        role: document.getElementById("role").value,
-        desc: document.getElementById("desc").value,
-        species: document.getElementById("species").value,
-        gender: document.getElementById("gender").value,
-        abilities: document.getElementById("abilities").value,
-
-        rarity: document.getElementById("rarity").value, 
-
-        image: document.getElementById("cardImage").src,
-
-        // IMPORTANT: styles
-        colors: {
-            color1: document.getElementById("color1").value,
-            color2: document.getElementById("color2").value,
-            textColor: document.getElementById("textColor").value,
-            borderColor: document.getElementById("borderColor").value
-        },
-
-        font: document.getElementById("fontSelect").value,
-        templateId: document.getElementById("templateSelect").value
-    };
-}
-
-const dbName = "CardCraftDB";
-const storeName = "cards";
-const packStore = "packs";
-
-function openDB() {
-
-    return new Promise((resolve, reject) => {
-
-       const request = indexedDB.open(dbName, 2);
-
-        request.onupgradeneeded = e => {
-
-            const db = e.target.result;
-
-            if (!db.objectStoreNames.contains(storeName)) {
-
-                db.createObjectStore(storeName, {
-                    keyPath: "id"
+                const frontCanvas = await html2canvas(cardFront, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null
                 });
 
+                pdf.addImage(frontCanvas.toDataURL("image/png"), "PNG", 15, 15, 180, 260);
+
+                pdf.addPage();
+
+                /* ================= BACK ================= */
+
+                cardFront.style.display = "none";
+                cardBack.style.display = "block";
+
+                await new Promise(r => setTimeout(r, 150));
+
+                const backCanvas = await html2canvas(cardBack, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null
+                });
+
+                pdf.addImage(backCanvas.toDataURL("image/png"), "PNG", 15, 15, 180, 260);
+
+                /* ================= RESTORE ================= */
+
+                cardFront.style.display = frontDisplay;
+                cardBack.style.display = backDisplay;
+
+                body.classList.remove("export-mode");
+
+                pdf.save(`${name}.pdf`);
+
+            });
+
+        /* ========================= */
+        /* INITIAL HIDE EMPTY FIELDS */
+        /* ========================= */
+
+        Object.keys(fields).forEach(id => {
+
+            const target =
+                document.getElementById(fields[id]);
+
+            if (target) {
+
+                target.style.display = "none";
+
             }
 
-            if (!db.objectStoreNames.contains(packStore)) {
-                db.createObjectStore(packStore, { keyPath: "id" });
-            }
+        });
 
-        };
+        /* ========================= */
+        /* DEFAULT CARD NAME */
+        /* ========================= */
 
-        request.onsuccess = () => resolve(request.result);
+        document.getElementById("cardName")
+            .style.display = "block";
 
-        request.onerror = () => reject(request.error);
+        document.getElementById("backName")
+            .style.display = "block";
 
-    });
 
-}
+        if ("serviceWorker" in navigator) {
 
-document.getElementById("saveLocal")
-    .addEventListener("click", async () => {
+            window.addEventListener("load", () => {
 
-        const db = await openDB();
-        const tx = db.transaction(storeName, "readwrite");
-        const store = tx.objectStore(storeName);
+                navigator.serviceWorker.register("./service-worker.js")
+                    .then(() => {
+                        console.log("PWA Ready");
+                    });
 
-        const cardData = {
-            id: Date.now(),
-            ...getCardState()
-        };
+            });
 
-        store.add(cardData);
+        }
 
-        alert("Card Saved Offline!");
-    });
+        function getCardState() {
+            return {
+                name: document.getElementById("name").value,
+                series: document.getElementById("series").value,
+                role: document.getElementById("role").value,
+                desc: document.getElementById("desc").value,
+                species: document.getElementById("species").value,
+                gender: document.getElementById("gender").value,
+                abilities: document.getElementById("abilities").value,
 
-document.getElementById("loadCards")
-    .addEventListener("click", async () => {
+                rarity: document.getElementById("rarity").value,
 
-        const db = await openDB();
+                image: document.getElementById("cardImage").src,
 
-        const tx = db.transaction(storeName, "readonly");
+                backgroundImage: backgroundImage,
+                // IMPORTANT: styles
+                colors: {
+                    color1: document.getElementById("color1").value !== "#DC143C" ? document.getElementById("color1").value : '',
+                    color2: document.getElementById("color2").value !== "#8B0000" ? document.getElementById("color2").value : '',
+                    textColor: document.getElementById("textColor").value !== "#ffffff" ? document.getElementById("textColor").value : '',
+                    borderColor: document.getElementById("borderColor").value
+                },
 
-        const store = tx.objectStore(storeName);
+                font: document.getElementById("fontSelect").value,
+                templateId: document.getElementById("templateSelect").value
+            };
+        }
 
-        const request = store.getAll();
+        const dbName = "CardCraftDB";
+        const storeName = "cards";
+        const packStore = "packs";
 
-        request.onsuccess = () => {
+        function openDB() {
 
-            // console.log(request.result);
-            window.location.href = "gallery.html";
+            return new Promise((resolve, reject) => {
 
-        };
+                const request = indexedDB.open(dbName, 2);
 
-    });
+                request.onupgradeneeded = e => {
 
-function importCard(file) {
+                    const db = e.target.result;
 
-    const reader = new FileReader();
+                    if (!db.objectStoreNames.contains(storeName)) {
 
-    reader.onload = e => {
+                        db.createObjectStore(storeName, {
+                            keyPath: "id"
+                        });
 
-        const data = JSON.parse(e.target.result);
+                    }
 
-        // text
-        document.getElementById("name").value = data.name;
-        document.getElementById("series").value = data.series;
-        document.getElementById("role").value = data.role;
-        document.getElementById("desc").value = data.desc;
-        document.getElementById("species").value = data.species;
-        document.getElementById("gender").value = data.gender;
-        document.getElementById("abilities").value = data.abilities;
+                    if (!db.objectStoreNames.contains(packStore)) {
+                        db.createObjectStore(packStore, { keyPath: "id" });
+                    }
 
-        // image
-        document.getElementById("cardImage").src = data.image;
+                };
 
-        // styles
-        document.getElementById("color1").value = data.colors.color1;
-        document.getElementById("color2").value = data.colors.color2;
-        document.getElementById("textColor").value = data.colors.textColor;
-        document.getElementById("borderColor").value = data.colors.borderColor;
+                request.onsuccess = () => resolve(request.result);
 
-        document.getElementById("fontSelect").value = data.font;
-        document.getElementById("templateSelect").value = data.templateId;
+                request.onerror = () => reject(request.error);
 
-        // re-apply UI updates
-        updateColors();
+            });
 
-        document.getElementById("fontSelect")
-            .dispatchEvent(new Event("change"));
+        }
 
-        document.getElementById("templateSelect")
-            .dispatchEvent(new Event("change"));
-    };
+        document.getElementById("saveLocal")
+            .addEventListener("click", async () => {
 
-    reader.readAsText(file);
-}
+                const db = await openDB();
+                const tx = db.transaction(storeName, "readwrite");
+                const store = tx.objectStore(storeName);
 
-async function loadGallery() {
+                const cardData = {
+                    id: Date.now(),
+                    ...getCardState()
+                };
 
-    const gallery = document.getElementById("gallery");
-    gallery.innerHTML = "";
+                store.add(cardData);
 
-    const db = await openDB();
-    const tx = db.transaction("cards", "readonly");
-    const store = tx.objectStore("cards");
+                alert("Card Saved Offline!");
+            });
 
-    const req = store.getAll();
+        document.getElementById("loadCards")
+            .addEventListener("click", async () => {
 
-    req.onsuccess = () => {
+                const db = await openDB();
 
-        req.result.forEach(card => {
+                const tx = db.transaction(storeName, "readonly");
 
-            const div = document.createElement("div");
+                const store = tx.objectStore(storeName);
 
-            div.innerHTML = `
+                const request = store.getAll();
+
+                request.onsuccess = () => {
+
+                    // console.log(request.result);
+                    window.location.href = "gallery.html";
+
+                };
+
+            });
+
+        function importCard(file) {
+
+            const reader = new FileReader();
+
+            reader.onload = e => {
+
+                const data = JSON.parse(e.target.result);
+
+                backgroundImage =
+                    data.backgroundImage || null;
+
+                // text
+                document.getElementById("name").value = data.name;
+                document.getElementById("series").value = data.series;
+                document.getElementById("role").value = data.role;
+                document.getElementById("desc").value = data.desc;
+                document.getElementById("species").value = data.species;
+                document.getElementById("gender").value = data.gender;
+                document.getElementById("abilities").value = data.abilities;
+
+                // image
+                document.getElementById("cardImage").src = data.image;
+
+                // styles
+                document.getElementById("color1").value = data.colors.color1;
+                document.getElementById("color2").value = data.colors.color2;
+                document.getElementById("textColor").value = data.colors.textColor;
+                document.getElementById("borderColor").value = data.colors.borderColor;
+
+                document.getElementById("fontSelect").value = data.font;
+                document.getElementById("templateSelect").value = data.templateId;
+
+                // re-apply UI updates
+                updateColors();
+
+                document.getElementById("fontSelect")
+                    .dispatchEvent(new Event("change"));
+
+                document.getElementById("templateSelect")
+                    .dispatchEvent(new Event("change"));
+            };
+
+            reader.readAsText(file);
+        }
+
+        async function loadGallery() {
+
+            const gallery = document.getElementById("gallery");
+            gallery.innerHTML = "";
+
+            const db = await openDB();
+            const tx = db.transaction("cards", "readonly");
+            const store = tx.objectStore("cards");
+
+            const req = store.getAll();
+
+            req.onsuccess = () => {
+
+                req.result.forEach(card => {
+
+                    const div = document.createElement("div");
+
+                    div.innerHTML = `
                 <div class="card-item">
                     <img src="${card.image}" width="120"/>
                     <h3>${card.name}</h3>
                 </div>
             `;
 
-            gallery.appendChild(div);
+                    gallery.appendChild(div);
+                });
+
+            };
+        }
+
+        let currentSlide = 0;
+        const totalSlides = 2;
+        let autoCycle = setInterval(nextSlide, 5000);
+
+        function switchSlide(index) {
+            clearInterval(autoCycle);
+            autoCycle = setInterval(nextSlide, 5000);
+
+            currentSlide = index;
+            updateUI();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateUI();
+        }
+
+        function updateUI() {
+            // Target both slide elements directly by index
+            for (let i = 0; i < totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                const dot = document.querySelectorAll('.dot')[i];
+
+                if (i === currentSlide) {
+                    slide.classList.add('active');
+                    dot.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                    dot.classList.remove('active');
+                }
+            }
+        }
+
+        const mainGroup = document.querySelector('.profileFormGroup');
+        const extraFields = document.getElementById('extraFields');
+
+        function expandForm() {
+            extraFields.classList.add('expanded');
+        }
+
+        // Closes the popup safely if you tap or click outside the component boundaries
+        document.addEventListener('click', function (event) {
+            const isClickInside = mainGroup.contains(event.target);
+
+            if (!isClickInside) {
+                extraFields.classList.remove('expanded');
+            }
         });
 
-    };
-}
+        // Floating Buttons 
 
-let currentSlide = 0;
-const totalSlides = 2;
-let autoCycle = setInterval(nextSlide, 5000);
+        const floatingMenu = document.getElementById('floatingMenu');
+        const masterBtn = document.getElementById('masterBtn');
 
-function switchSlide(index) {
-    clearInterval(autoCycle);
-    autoCycle = setInterval(nextSlide, 5000);
+        // Toggle open/close state on click
+        masterBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            floatingMenu.classList.toggle('active');
+        });
 
-    currentSlide = index;
-    updateUI();
-}
+        // Close smoothly if the user clicks anywhere else on the screen
+        document.addEventListener('click', (e) => {
+            if (!floatingMenu.contains(e.target)) {
+                floatingMenu.classList.remove('active');
+            }
+        });
 
-function nextSlide() {
-    currentSlide = (currentSlide + 1) % totalSlides;
-    updateUI();
-}
+        // Close menu upon selecting an option
+        document.querySelectorAll('.menu-item').forEach(button => {
+            button.addEventListener('click', () => {
+                floatingMenu.classList.remove('active');
+            });
+        });
 
-function updateUI() {
-    // Target both slide elements directly by index
-    for (let i = 0; i < totalSlides; i++) {
-        const slide = document.getElementById(`slide-${i}`);
-        const dot = document.querySelectorAll('.dot')[i];
-        
-        if (i === currentSlide) {
-            slide.classList.add('active');
-            dot.classList.add('active');
-        } else {
-            slide.classList.remove('active');
-            dot.classList.remove('active');
-        }
-    }
-}
+        // Gradient Image upload Logic
 
-const mainGroup = document.querySelector('.profileFormGroup');
-const extraFields = document.getElementById('extraFields');
+        const backgroundDropZone =
+            document.getElementById("backgroundDropZone");
 
-function expandForm() {
-    extraFields.classList.add('expanded');
-}
+        backgroundDropZone.addEventListener("dragover", e => {
+            e.preventDefault();
+        });
 
-// Closes the popup safely if you tap or click outside the component boundaries
-document.addEventListener('click', function(event) {
-    const isClickInside = mainGroup.contains(event.target);
+        backgroundDropZone.addEventListener("drop", e => {
 
-    if (!isClickInside) {
-        extraFields.classList.remove('expanded');
-    }
-});
+            e.preventDefault();
+
+            const file = e.dataTransfer.files[0];
+
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = ev => {
+
+                backgroundImage = ev.target.result;
+
+                updateColors();
+
+            };
+
+            reader.readAsDataURL(file);
+
+        });

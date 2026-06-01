@@ -108,11 +108,26 @@ nav .btn-ios-import svg {
     height: 14px !important;
 }
 
+.card-header h1 {
+    font-size: 32px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 65%;
+}
+
+.card-header p {
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .gallery-grid {
     display: flex;
     flex-wrap: wrap;
     /* grid-template-columns: repeat(auto-fill, minmax(81px, 1fr)); */
-    gap: 16px;
+    gap: 30px 20px;
     padding: 20px;
     /* height: 84dvh; */
     min-height: 84dvh;
@@ -142,10 +157,40 @@ nav .btn-ios-import svg {
 
 /* MINI CARD */
 .mini-card {
+    position: relative;
+    overflow: hidden;
+    
     transform: scale(0.45);
     transform-origin: top left;
     width: 500px;
     pointer-events: none;
+
+    height: 42rem;
+}
+
+.shine {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background:
+        linear-gradient(120deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+    transform: rotate(25deg);
+    top: -50%;
+    left: -50%;
+    animation: shine 6s infinite linear;
+}
+
+@keyframes shine {
+    from {
+        transform: translateX(-100%) rotate(25deg);
+    }
+
+    to {
+        transform: translateX(100%) rotate(25deg);
+    }
 }
 
 .image-area {

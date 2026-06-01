@@ -59,42 +59,36 @@
                 </div>
             </div>
 
-            <div class="group">
-                <label>Species</label>
-                <input type="text" id="species">
-            </div>
-
-            <div class="group">
-                <label>Gender</label>
-                <input type="text" id="gender">
-            </div>
-
-            <div class="group">
-                <label>Abilities</label>
-                <textarea id="abilities"></textarea>
-            </div>
-
-            <div class="group">
-                <label>Rarity</label>
-                <select id="rarity">
-                    <option>Common</option>
-                    <option>Rare</option>
-                    <option>Epic</option>
-                    <option>Legendary</option>
-                </select>
-            </div>
-
-            <div class="buttons">
-                <div class="groupBox">
-                    <button id="saveLocal">Save Card</button>
-                    <button id="flipCard">Flip Card</button>
+            <div class="profileFormGroup" style="margin-top: 1rem;">
+                <div class="group">
+                    <label>Species</label>
+                    <input type="text" id="species">
                 </div>
 
-                <div class="groupBox">
-                    <button id="saveImage">Export PNG</button>
-                    <button id="savePDF">Export PDF</button>
+                <div class="group">
+                    <label>Gender</label>
+                    <input type="text" id="gender">
                 </div>
             </div>
+
+            <div class="profileFormGroup" style="margin-top: 1rem;">
+                <div class="group">
+                    <label>Abilities</label>
+                    <textarea id="abilities"></textarea>
+                </div>
+
+                <div class="group">
+                    <label>Rarity</label>
+                    <select id="rarity">
+                        <option>Common</option>
+                        <option>Rare</option>
+                        <option>Epic</option>
+                        <option>Legendary</option>
+                    </select>
+                </div>
+            </div>
+
+
 
         </div>
 
@@ -123,11 +117,11 @@
 
                         <div class="image-area" id="dropArea">
 
-                            <img id="cardImage" src="https://via.placeholder.com/400x300" alt="Upload a Image">
+                            <img id="cardImage" src="./assests/profilePlaceholder.jpg" alt="Upload a Image">
 
-                            <!-- <div class="drop-text">
-                            Drag & Drop / Upload / Paste Image URL
-                        </div> -->
+                            <div class="drop-text">
+                                Drag & Drop / Upload / Paste Image URL
+                            </div>
 
                         </div>
 
@@ -200,7 +194,7 @@
                 </div>
             </div>
 
-            <div class="colorBoxGroup">
+            <div class="colorBoxGroup" id="backgroundDropZone">
                 <div class="colorRow">
                     <label class="colorLabel" for="color1">Gradient 1</label>
                     <input type="color" id="color1" value="#DC143C">
@@ -271,6 +265,22 @@
             </div>
 
             <div class="buttons">
+                <div class="menu-container-relative">
+                    <div class="floating-menu-left" id="floatingMenu">
+
+                        <div class="menu-options">
+                            <button id="savePDF" class="menu-item" data-label="Export PDF">PDF</button>
+                            <button id="saveImage" class="menu-item" data-label="Export PNG">PNG</button>
+                            <button id="flipCard" class="menu-item" data-label="Flip Card">Flip</button>
+                            <button id="saveLocal" class="menu-item" data-label="Save Card">Save</button>
+                        </div>
+
+                        <button class="master-btn" id="masterBtn">
+                            <span class="icon">+</span>
+                            <span class="btn-text">Actions</span>
+                        </button>
+                    </div>
+                </div>
 
                 <button id="loadCards">Gallery</button>
 
