@@ -1,25 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 
 <head>
     <title>Card View</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="view.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="view.css" />
 
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500&family=Cinzel:wght@600&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" />
 
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500;700&family=Cinzel:wght@600&family=Cinzel+Decorative:wght@700&family=Inter:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@600&family=Playfair+Display:ital,wght@0,600;1,600&family=Bangers&family=Permanent+Marker&family=Anton&family=Press+Start+2P&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
-
     <button id="backBtn" class="back-btn">← Back</button>
+    <div id="imageOverlay" class="overlay hidden">
+        <img id="overlayImg" />
+    </div>
     <div id="viewRoot"></div>
     <!-- <button id="exportBtn" class="expo-btn">Export Card</button> -->
     <div class="buttonBox">
@@ -39,6 +41,7 @@
         </button>
     </div>
 
+    <script src="./assests/Notification/modalModule.js"></script>
     <script src="view.js"></script>
 </body>
 

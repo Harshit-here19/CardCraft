@@ -6,13 +6,6 @@ html,
 body {
     /* 1. The Magic Key: Forces iOS momentum-style physics */
     scroll-behavior: smooth;
-
-    /* 2. Allows native elastic rubber-band bouncing effect when reaching top/bottom */
-    overscroll-behavior: bounce;
-
-    /* 3. Hardware acceleration: Ensures smooth 60/120fps scrolling on heavy pages */
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
 }
 
 body {
@@ -75,14 +68,14 @@ body {
 .layout {
     display: grid;
     grid-template-columns: 320px 1fr 320px;
-    height: 100vh;
+    height: 100dvh;
 }
 
 /* PANELS */
 
 .panel {
     background: #1c1c1e;
-    padding: 24px;
+    padding: 20px 24px 0 24px;
     overflow-y: auto;
     border-right: 0.5px solid #38383a;
 }
@@ -299,12 +292,12 @@ button:active {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.5;
-    
+
     background: rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(4px);
     pointer-events: none;
     transition: opacity 0.25s ease;
-    
+
     font-style: italic;
     border-radius: 22px;
 }
@@ -380,8 +373,6 @@ button:active {
 .back {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
@@ -461,18 +452,6 @@ button:active {
     width: 200px;
     margin: 10px;
     display: inline-block;
-}
-
-.mini-card {
-    transform: scale(0.4);
-    transform-origin: top left;
-
-    width: 500px;
-    /* keep original layout width */
-    height: auto;
-
-    pointer-events: none;
-    /* optional: prevents weird hover issues */
 }
 
 .groupBox {
@@ -629,6 +608,8 @@ button:active {
    Main Group Container
    =================================================== */
 .colorBoxGroup {
+    position: relative;
+    
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -642,6 +623,9 @@ button:active {
     margin-bottom: 16px;
     /* Spacing between the two separate box units */
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+    max-height: 8.5rem;
+    overflow-y: scroll;
 }
 
 /* Individual rows pairing label + picker */
@@ -657,6 +641,24 @@ button:active {
 /* Creates a clean divider line between internal items, mimicking iOS Settings rows */
 .colorRow:not(:last-child) {
     border-bottom: 1px solid #2c2c2e;
+}
+
+.colorDesc {    
+    font-size: 12px;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.colorDesc span {
+    cursor: pointer;
+}
+
+.colorDesc span:hover {
+    transform: scale(1.1);
+    transform-origin: center;
+
 }
 
 /* Row Labels */
@@ -935,6 +937,18 @@ button:active {
     pointer-events: auto;
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Create an invisible bridge to catch the hover across the 14px gap */
+.menu-options::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 16px; /* Slightly taller than your 14px gap to ensure crossover coverage */
+    background: transparent;
+    pointer-events: auto; /* Explicitly catch pointer actions */
 }
 
 /* Smooth pop up stagger triggers */

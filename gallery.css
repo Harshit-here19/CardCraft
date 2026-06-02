@@ -1,53 +1,59 @@
 body {
     height: 100vh;
+    overflow: hidden;
+    padding-top: 54px;
+    box-sizing: border-box;
 }
 
 nav h1.title {
-  /* 1. Use Apple's system font stack */
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-  
-  /* Subtle light-to-muted gradient text mask */
-  background: linear-gradient(180deg, #FFFFFF 0%, #B0B0B5 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  
-  margin-bottom: 20px;
-  
-  /* 2. Official iOS Navigation Bar size & weight specifications */
-  font-size: 2rem; 
-  font-weight: 600; /* Semi-bold */
-  
-  /* 3. iOS premium tight tracking (letter-spacing) */
-  letter-spacing: -0.4px;
-  
-  /* 4. Elegant off-white to eliminate harsh high-contrast glow */
-  color: #ffffff;
-  
-  /* 5. Layout Reset */
-  margin: 0;
-  padding: 0;
-  line-height: 1.2;
-  
-  /* 6. Anti-aliasing for razor-sharp text on dark backgrounds */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  
-  /* Prevents text from wrapping if the screen gets very small */
-  white-space: nowrap; 
+    /* 1. Use Apple's system font stack */
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 
-  animation: iosNavTitlePop 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    /* Subtle light-to-muted gradient text mask */
+    background: linear-gradient(180deg, #FFFFFF 0%, #B0B0B5 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    margin-bottom: 20px;
+
+    /* 2. Official iOS Navigation Bar size & weight specifications */
+    font-size: 2rem;
+    font-weight: 600;
+    /* Semi-bold */
+
+    /* 3. iOS premium tight tracking (letter-spacing) */
+    letter-spacing: -0.4px;
+
+    /* 4. Elegant off-white to eliminate harsh high-contrast glow */
+    color: #ffffff;
+
+    /* 5. Layout Reset */
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+
+    /* 6. Anti-aliasing for razor-sharp text on dark backgrounds */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Prevents text from wrapping if the screen gets very small */
+    white-space: nowrap;
+
+    animation: iosNavTitlePop 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @keyframes iosNavTitlePop {
-  from {
-    opacity: 0;
-    transform: translateY(4px); /* Gentle slide-up */
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+        /* Gentle slide-up */
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ===================================================
@@ -59,30 +65,34 @@ nav {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 999; /* Keeps nav anchored above body elements */
-    
+    z-index: 999;
+    /* Keeps nav anchored above body elements */
+
     /* 2. iOS Flexbox Alignment */
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+
     /* 3. Spacing & Dimensions */
-    height: 44px; /* Standard Apple human interface navbar height spec */
-    padding: 28px 16px; 
+    height: 44px;
+    /* Standard Apple human interface navbar height spec */
+    padding: 28px 16px;
     box-sizing: border-box;
 
     /* 4. Glassmorphism / Frosted Glass Core Layout */
-    background-color: rgba(28, 28, 30, 0.75); /* System Background Secondary with alpha */
-    -webkit-backdrop-filter: blur(20px);      /* Core iOS dynamic background blur */
+    background-color: rgba(28, 28, 30, 0.75);
+    /* System Background Secondary with alpha */
+    -webkit-backdrop-filter: blur(20px);
+    /* Core iOS dynamic background blur */
     backdrop-filter: blur(20px);
-    
+
     /* Elegant hairline border separation native to iOS */
-    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1); 
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Add an upper cushion margin to your main body container so content doesn't hide behind the fixed navbar */
 body {
-    padding-top: 54px; 
+    padding-top: 54px;
 }
 
 /* ===================================================
@@ -93,12 +103,14 @@ body {
 .buttonBox {
     display: flex;
     align-items: center;
-    gap: 8px; /* Perfectly gaps export and import */
+    gap: 8px;
+    /* Perfectly gaps export and import */
 }
 
 /* Slightly modify your existing .btn-ios-import to fit perfectly in a compact 44px navigation bar */
 nav .btn-ios-import {
-    padding: 6px 12px !important; /* Forces uniform compact height inside navbar context */
+    padding: 6px 12px !important;
+    /* Forces uniform compact height inside navbar context */
     font-size: 14px !important;
     border-radius: 8px !important;
 }
@@ -131,8 +143,9 @@ nav .btn-ios-import svg {
     padding: 20px;
     /* height: 84dvh; */
     min-height: 84dvh;
-    overflow-x: hidden;
+    height: calc(100vh - 120px);
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 /* CARD BASE */
@@ -140,7 +153,7 @@ nav .btn-ios-import svg {
     position: relative;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     cursor: pointer;
-    height: 17rem;
+    height: 18rem;
 }
 
 /* HOVER ZOOM */
@@ -159,13 +172,64 @@ nav .btn-ios-import svg {
 .mini-card {
     position: relative;
     overflow: hidden;
-    
+
     transform: scale(0.45);
     transform-origin: top left;
     width: 500px;
     pointer-events: none;
 
     height: 42rem;
+}
+
+.mini-card-delete-btn {
+    position: absolute;
+    bottom: -2px;
+    right: -10px;
+    z-index: 20;
+
+    /* 1. Mobile-First Sizing: 32px ensures it meets basic touch-target guidelines */
+    width: 32px; 
+    height: 32px;
+    border: none;
+    background: transparent;
+    
+    /* 2. Mobile Visibility: Visible enough to see immediately on a screen */
+    color: rgba(0, 0, 0, 0.4); 
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 300;
+    
+    /* Removes the annoying blue flash highlight on mobile tap */
+    -webkit-tap-highlight-color: transparent; 
+    
+    transition: color 0.2s ease, transform 0.1s ease;
+}
+
+/* 3. Mobile Touch Feedback */
+.mini-card-delete-btn:active {
+    color: rgba(0, 0, 0, 0.9);
+    transform: scale(0.85); /* Slightly more dramatic shrink so the user knows they hit it */
+}
+
+/* --- DESKTOP ONLY OVERRIDES --- */
+/* This block ONLY runs if the device actually supports a hovering pointer (mouse) */
+@media (hover: hover) {
+    .mini-card-delete-btn {
+        width: 24px;  /* Shrink back down for precise mouse clicks */
+        height: 24px;
+        color: rgba(0, 0, 0, 0.15); /* Fade it out into the background */
+    }
+
+    .mini-card-delete-btn:hover {
+        color: rgba(0, 0, 0, 0.8); /* Sharpen on mouse hover */
+    }
+    
+    .mini-card-delete-btn:active {
+        transform: scale(0.92);
+    }
 }
 
 .shine {
@@ -339,20 +403,23 @@ button:active {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;       
-    
+    gap: 12px;
+
     /* 1. Spans full width dynamically up to a clean desktop break point */
-    width: 100%; 
-    max-width: 800px; /* Prevents the inputs from stretching into massive, distorted blocks */
-    margin: 0 auto;   /* Perfectly centers the toolbar horizontally on the page */
-    
+    width: 100%;
+    max-width: 800px;
+    /* Prevents the inputs from stretching into massive, distorted blocks */
+    margin: 0 auto;
+    /* Perfectly centers the toolbar horizontally on the page */
+
     /* 2. Compact iOS Spec Padding */
-    padding: 8px 16px; 
+    padding: 8px 16px;
     box-sizing: border-box;
-    
+
     /* 3. Subtle Styling Integration */
-    background: #1c1c1e; 
-    border-radius: 12px; /* Keeps a soft corner context unless on tiny mobile screens */
+    background: #1c1c1e;
+    border-radius: 12px;
+    /* Keeps a soft corner context unless on tiny mobile screens */
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -379,20 +446,23 @@ button:active {
     position: relative;
     flex: 1;
     min-width: 110px;
-    max-width: 180px; /* Hard caps the drop-downs so they never look overly large */
+    max-width: 180px;
+    /* Hard caps the drop-downs so they never look overly large */
 }
 
 .toolbar input {
     flex: 1.5;
     min-width: 140px;
-    max-width: 260px; /* Caps the search bar from bloating */
+    max-width: 260px;
+    /* Caps the search bar from bloating */
 }
 
 /* Unified Compact Input Sizing */
 .toolbar select,
 .toolbar input {
     width: 100%;
-    height: 34px; /* Dropped from 38px to a tighter, highly premium iOS sub-menu spec */
+    height: 34px;
+    /* Dropped from 38px to a tighter, highly premium iOS sub-menu spec */
     padding: 0 12px;
     box-sizing: border-box;
     background: #2c2c2e;
@@ -400,7 +470,8 @@ button:active {
     border: 1px solid transparent;
     border-radius: 8px;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 13px; /* Slightly smaller typography removes the clunky "large" feel */
+    font-size: 13px;
+    /* Slightly smaller typography removes the clunky "large" feel */
     transition: background 0.2s, border-color 0.2s;
 }
 
@@ -435,5 +506,13 @@ button:active {
 }
 
 /* Hover & Focus Interactions */
-.toolbar select:hover, .toolbar input:hover { background: #3a3a3c; }
-.toolbar select:focus, .toolbar input:focus { background: #2c2c2e; border-color: #007aff; }
+.toolbar select:hover,
+.toolbar input:hover {
+    background: #3a3a3c;
+}
+
+.toolbar select:focus,
+.toolbar input:focus {
+    background: #2c2c2e;
+    border-color: #007aff;
+}

@@ -47,7 +47,7 @@ async function loadView() {
     const font = card?.font || template?.font || "Poppins";
     const shadow = template?.cardShadow || "none";
 
-    console.log(card);
+    // console.log(card);
 
     document.getElementById("viewRoot").innerHTML = `
         
@@ -60,7 +60,7 @@ async function loadView() {
             ">
             <div class="shine"></div>
 
-            <img src="${card.image}" class="view-img"/>
+            <img src="${card.image}" class="view-img" id="cardImage"/>
 
             <div class="badge">${card.rarity || "Common"}</div>
 
@@ -68,17 +68,67 @@ async function loadView() {
             <p>${card.series}</p>
 
             <div class="meta">
-                <p><b>Role:</b> ${card.role || "-"}</p>
-                <p><b>Species:</b> ${card.species || "-"}</p>
-                <p><b>Gender:</b> ${card.gender || "-"}</p>
+                ${card.role ? `<p><b>Role:</b> ${card.role}</p>` : ""}
+                
+                ${card.species ? `<p><b>Species:</b> ${card.species}</p>` : ""}
+                
+                ${card.gender ? `<p><b>Gender:</b> ${card.gender}</p>` : ""}
             </div>
 
-            <div class="desc">
-                ${card.desc || ""}
-            </div>
+            ${card.desc ? `<div class="desc" id="desc">${card.desc}</div>` : ""}
 
         </div>
     `;
+
+    const img = document.getElementById("cardImage");
+    const overlay = document.getElementById("imageOverlay");
+    const overlayImg = document.getElementById("overlayImg");
+
+    img.addEventListener("click", () => {
+      const rect = img.getBoundingClientRect();
+
+      overlay.classList.remove("hidden");
+
+      overlayImg.src = img.src;
+
+      // set initial position EXACTLY over original image
+      overlayImg.style.width = rect.width + "px";
+      overlayImg.style.height = rect.height + "px";
+      overlayImg.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1)`;
+
+      // force render
+      overlayImg.getBoundingClientRect();
+
+      // target fullscreen center
+      const targetWidth = window.innerWidth * 0.9;
+      const scale = 1.5 || targetWidth / rect.width;
+
+      const targetX = (window.innerWidth - rect.width * scale) / 2;
+      const targetY = (window.innerHeight - rect.height * scale) / 2;
+
+      requestAnimationFrame(() => {
+        overlayImg.style.transform = `translate(${targetX}px, ${targetY}px) scale(${scale})`;
+      });
+    });
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target !== overlayImg) {
+        const rect = img.getBoundingClientRect();
+
+        overlayImg.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1)`;
+
+        setTimeout(() => {
+          overlay.classList.add("hidden");
+        }, 450);
+      }
+    });
+
+    const desc = document.getElementById("desc");
+    desc.addEventListener("click", async () => {
+      console.log("Desc Clicked!!");
+
+      await ModalModule.open("Description", card.desc);
+    });
   };
 }
 
@@ -90,7 +140,10 @@ document.getElementById("backBtn").addEventListener("click", () => {
 
 function exportCurrentCard() {
   if (!currentCard) {
-    alert("Card not loaded yet.");
+    // alert("Card not loaded yet.");
+    NotificationModule.notify("Error", "Card not Loaded yet.", {
+      type: "warning",
+    });
     return;
   }
 
@@ -129,7 +182,7 @@ function prepareExport() {
   const shine = document.querySelector(".shine");
   if (shine) shine.style.display = "none";
 
-  document.querySelectorAll(".meta p, .badge").forEach(el => {
+  document.querySelectorAll(".meta p, .badge").forEach((el) => {
     el.dataset.backdrop = el.style.backdropFilter;
     el.style.backdropFilter = "none";
     el.style.webkitBackdropFilter = "none";
@@ -142,7 +195,7 @@ function restoreAfterExport() {
   const shine = document.querySelector(".shine");
   if (shine) shine.style.display = "";
 
-  document.querySelectorAll(".meta p, .badge").forEach(el => {
+  document.querySelectorAll(".meta p, .badge").forEach((el) => {
     el.style.backdropFilter = "";
     el.style.webkitBackdropFilter = "";
     el.style.background = "";
