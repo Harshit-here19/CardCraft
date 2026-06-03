@@ -1,13 +1,8 @@
 const NotificationModule = (function () {
   // --- 1. CSS Injection ---
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
-    @font-face {
-      font-family: 'JetBrains Mono';
-      src: url('./fonts/JetBrainsMono-VariableFont_wght.woff2') format('woff2');
-      font-weight: 100 800;
-      font-style: normal;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 
     #notification-container {
       position: fixed;
@@ -89,17 +84,17 @@ const NotificationModule = (function () {
   document.head.appendChild(style);
 
   // --- 2. Logic ---
-  let container = document.getElementById('notification-container');
+  let container = document.getElementById("notification-container");
   if (!container) {
-    container = document.createElement('div');
-    container.id = 'notification-container';
+    container = document.createElement("div");
+    container.id = "notification-container";
     document.body.appendChild(container);
   }
 
   function createNotification(heading, message, options = {}) {
-    const { type = 'info', duration = 4000, sound = null } = options;
+    const { type = "info", duration = 4000, sound = null } = options;
 
-    const notif = document.createElement('div');
+    const notif = document.createElement("div");
     notif.className = `notification ${type}`;
     notif.innerHTML = `
       <div class="heading">${heading}</div>
@@ -110,29 +105,31 @@ const NotificationModule = (function () {
 
     if (sound) {
       const audio = new Audio(sound);
-      audio.play().catch(e => console.warn('Sound failed to play:', e));
+      audio.play().catch((e) => console.warn("Sound failed to play:", e));
     }
 
-    notif.querySelector('.close-btn').addEventListener('click', () => hideNotification(notif));
+    notif
+      .querySelector(".close-btn")
+      .addEventListener("click", () => hideNotification(notif));
     container.appendChild(notif);
 
-    setTimeout(() => notif.classList.add('show'), 50);
+    setTimeout(() => notif.classList.add("show"), 50);
 
-    const progress = notif.querySelector('.progress');
+    const progress = notif.querySelector(".progress");
     progress.style.transition = `width ${duration}ms linear`;
-    setTimeout(() => progress.style.width = '100%', 50);
+    setTimeout(() => (progress.style.width = "100%"), 50);
 
     setTimeout(() => hideNotification(notif), duration);
   }
 
   function hideNotification(notif) {
-    notif.classList.remove('show');
+    notif.classList.remove("show");
     setTimeout(() => {
       if (notif.parentNode) notif.parentNode.removeChild(notif);
     }, 400);
   }
 
   return {
-    notify: createNotification
+    notify: createNotification,
   };
 })();

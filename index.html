@@ -28,6 +28,8 @@
 
     <div class="layout">
 
+        <div class="backdrop-blur-overlay"></div>
+
         <!-- LEFT PANEL -->
         <div class="panel left-panel">
 
@@ -76,7 +78,7 @@
                     <textarea id="abilities"></textarea>
                 </div>
 
-                <div class="group">
+                <div class="group select-wrapper">
                     <label>Rarity</label>
                     <select id="rarity">
                         <option>Common</option>
@@ -196,12 +198,14 @@
             <div class="colorBoxGroup" id="backgroundDropZone">
                 <div class="colorRow">
                     <label class="colorLabel" for="color1">Gradient 1</label>
-                    <input type="color" id="color1" value="#DC143C">
+                    <span contenteditable="true" class="percent-span">0</span>
+                    <input type="color" id="color1" value="#009bc2">
                 </div>
 
                 <div class="colorRow">
                     <label class="colorLabel" for="color2">Gradient 2</label>
-                    <input type="color" id="color2" value="#8B0000">
+                    <span contenteditable="true" class="percent-span">100</span>
+                    <input type="color" id="color2" value="#128779">
                 </div>
 
                 <div class="colorDesc">
@@ -222,71 +226,75 @@
                 </div>
             </div>
 
-            <div class="group">
-                <label>Font</label>
-                <select id="fontSelect">
-                    <!-- Modern & Premium -->
-                    <optgroup label="Modern & Premium">
-                        <option value="Poppins">Poppins (Clean)</option>
-                        <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">SF Pro /
-                            System (iOS Default)</option>
-                        <option value="'Inter', sans-serif">Inter (Sleek)</option>
-                    </optgroup>
+            <div class="profileFormGroup">
 
-                    <!-- Gaming & Sci-Fi / Cyber -->
-                    <optgroup label="Sci-Fi & Cyberpunk">
-                        <option value="Orbitron">Orbitron (Futuristic)</option>
-                        <option value="'Share Tech Mono', monospace">Share Tech Mono (Hacker)</option>
-                        <option value="'Rajdhani', sans-serif">Rajdhani (Mecha)</option>
-                    </optgroup>
+                <div class="group select-wrapper">
+                    <label>Font</label>
+                    <select id="fontSelect">
+                        <!-- Modern & Premium -->
+                        <optgroup label="Modern & Premium">
+                            <option value="Poppins">Poppins (Clean)</option>
+                            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">SF Pro /
+                                System (iOS Default)</option>
+                            <option value="'Inter', sans-serif">Inter (Sleek)</option>
+                        </optgroup>
 
-                    <!-- Traditional & Fantasy -->
-                    <optgroup label="Fantasy & RPG">
-                        <option value="Cinzel">Cinzel (Royal)</option>
-                        <option value="'Cinzel Decorative', serif">Cinzel Decorative (Magic)</option>
-                        <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
-                    </optgroup>
+                        <!-- Gaming & Sci-Fi / Cyber -->
+                        <optgroup label="Sci-Fi & Cyberpunk">
+                            <option value="Orbitron">Orbitron (Futuristic)</option>
+                            <option value="'Share Tech Mono', monospace">Share Tech Mono (Hacker)</option>
+                            <option value="'Rajdhani', sans-serif">Rajdhani (Mecha)</option>
+                        </optgroup>
 
-                    <!-- Shonen & Action -->
-                    <optgroup label="Action & Manga">
-                        <option value="'Bangers', sans-serif">Bangers (Comic/Manga)</option>
-                        <option value="'Permanent Marker', cursive">Permanent Marker (Street/Fighter)</option>
-                        <option value="'Anton', sans-serif">Anton (Impact Heavy)</option>
-                    </optgroup>
+                        <!-- Traditional & Fantasy -->
+                        <optgroup label="Fantasy & RPG">
+                            <option value="Cinzel">Cinzel (Royal)</option>
+                            <option value="'Cinzel Decorative', serif">Cinzel Decorative (Magic)</option>
+                            <option value="'Playfair Display', serif">Playfair Display (Elegant)</option>
+                        </optgroup>
 
-                    <!-- Retro & Tech -->
-                    <optgroup label="Retro & Tech">
-                        <option value="Monospace">System Monospace</option>
-                        <option value="'Press Start 2P', cursive">Press Start 2P (8-Bit)</option>
-                    </optgroup>
-                </select>
-            </div>
+                        <!-- Shonen & Action -->
+                        <optgroup label="Action & Manga">
+                            <option value="'Bangers', sans-serif">Bangers (Comic/Manga)</option>
+                            <option value="'Permanent Marker', cursive">Permanent Marker (Street/Fighter)</option>
+                            <option value="'Anton', sans-serif">Anton (Impact Heavy)</option>
+                        </optgroup>
 
-            <div class="group">
-                <label>Card Template</label>
-                <select id="templateSelect">
-                </select>
-            </div>
-
-            <div class="buttons">
-                <div class="menu-container-relative">
-                    <div class="floating-menu-left" id="floatingMenu">
-
-                        <div class="menu-options">
-                            <button id="savePDF" class="menu-item" data-label="Export PDF">PDF</button>
-                            <button id="saveImage" class="menu-item" data-label="Export PNG">PNG</button>
-                            <button id="flipCard" class="menu-item" data-label="Flip Card">Flip</button>
-                            <button id="saveLocal" class="menu-item" data-label="Save Card">Save</button>
-                        </div>
-
-                        <button class="master-btn" id="masterBtn">
-                            <span class="icon">+</span>
-                            <span class="btn-text">Actions</span>
-                        </button>
-                    </div>
+                        <!-- Retro & Tech -->
+                        <optgroup label="Retro & Tech">
+                            <option value="Monospace">System Monospace</option>
+                            <option value="'Press Start 2P', cursive">Press Start 2P (8-Bit)</option>
+                        </optgroup>
+                    </select>
                 </div>
 
-                <button id="loadCards">Gallery</button>
+                <div class="group select-wrapper">
+                    <label>Card Template</label>
+                    <select id="templateSelect">
+                    </select>
+                </div>
+
+                <div class="buttons">
+                    <div class="menu-container-relative">
+                        <div class="floating-menu-left" id="floatingMenu">
+
+                            <div class="menu-options">
+                                <button id="savePDF" class="menu-item" data-label="Export PDF">PDF</button>
+                                <button id="saveImage" class="menu-item" data-label="Export PNG">PNG</button>
+                                <button id="flipCard" class="menu-item" data-label="Flip Card">Flip</button>
+                                <button id="saveLocal" class="menu-item" data-label="Save Card">Save</button>
+                            </div>
+
+                            <button class="master-btn" id="masterBtn">
+                                <span class="icon">+</span>
+                                <span class="btn-text">Actions</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="loadCards">Gallery</button>
+
+                </div>
 
             </div>
 

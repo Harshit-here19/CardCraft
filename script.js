@@ -7,6 +7,42 @@ const cardBack = document.getElementById("cardBack");
 const cardInner = document.getElementById("cardInner");
 const container = document.getElementById("cardContainer");
 
+const dbName = "CardCraftDB";
+const storeName = "cards";
+const packStore = "packs";
+
+let editingCardId = null;
+
+const params = new URLSearchParams(window.location.search);
+
+editingCardId = params.get("edit");
+
+if (editingCardId) {
+  loadCardForEditing(+editingCardId);
+}
+
+if (editingCardId) {
+    document.getElementById("saveLocal").innerText =
+        "Update";
+}
+
+async function loadCardForEditing(cardId) {
+  const db = await openDB();
+
+  const tx = db.transaction(storeName, "readonly");
+  const store = tx.objectStore(storeName);
+
+  const request = store.get(cardId);
+
+  request.onsuccess = () => {
+    const data = request.result;
+
+    if (!data) return;
+
+    populateEditor(data);
+  };
+}
+
 // In Deployement Enables this
 let templates = [];
 let backgroundImage = null;
@@ -161,16 +197,27 @@ dropArea.addEventListener("drop", (e) => {
 /* COLORS */
 /* ========================= */
 
-function updateColors() {
+function getGradientStrings() {
   const dropZone = document.getElementById("backgroundDropZone");
 
-  // 1. Select all the color inputs inside the container in order
-  const colorInputs = dropZone.querySelectorAll(
-    '.colorRow input[type="color"]',
-  );
+  // 1. Select all the color row containers in order
+  const colorRows = dropZone.querySelectorAll(".colorRow");
 
-  // 2. Map them to get an array of just the hex code values (e.g., ['#DC143C', '#8B0000', ...])
-  const colorValues = Array.from(colorInputs).map((input) => input.value);
+  // 2. Map through the rows to extract and pair the hex code and percentage span value
+  const colorValues = Array.from(colorRows).map((row) => {
+    const input = row.querySelector('input[type="color"]');
+    const span = row.querySelector("span");
+
+    const hex = input ? input.value : "#000000";
+    // Get the percentage text. If the span has just "50", we append "%".
+    let percent = span ? span.textContent.trim() : "0";
+    if (!percent.includes("%")) {
+      percent += "%";
+    }
+
+    // Combines them into format: "#DC143C 0%"
+    return `${hex} ${percent}`;
+  });
 
   // Edge case: If there are no colors at all
   if (colorValues.length === 0) {
@@ -193,19 +240,17 @@ function updateColors() {
   const c1 = trackingColors.join(","); // Comma-separated string (e.g., "hex1,hex2,hex3")
   const c2 = lastColor; // Single hex string (e.g., "hex4")
 
-  console.log(c1, c2);
+  return { c1, c2 };
+}
 
-  // const c1 =
-  //     document.getElementById("color1").value;
-
-  // const c2 =
-  //     document.getElementById("color2").value;
+function updateColors() {
+  // Call our helper function to extract c1 and c2 strings
+  const { c1, c2 } = getGradientStrings();
 
   const gradient = `linear-gradient(135deg, ${c1}, ${c2})`;
 
   if (backgroundImage) {
     card.style.backgroundImage = `url(${backgroundImage})`;
-
     cardBack.style.backgroundImage = `url(${backgroundImage})`;
 
     card.style.backgroundSize = "cover";
@@ -446,11 +491,29 @@ document.getElementById("cardName").style.display = "block";
 document.getElementById("backName").style.display = "block";
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").then(() => {
-      console.log("PWA Ready");
-    });
-  });
+  navigator.serviceWorker
+    .register("./service-worker.js")
+    .then((reg) => {
+      // Check if there is an update found
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        if (installingWorker == null) return;
+
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === "installed") {
+            if (navigator.serviceWorker.controller) {
+              // New content is available; force reload to see changes
+              NotificationModule.notify(
+                "NEW!!",
+                "New content available! Reloading...",
+              );
+              window.location.reload();
+            }
+          }
+        };
+      };
+    })
+    .catch((err) => console.error("Service Worker registration failed:", err));
 }
 
 function getCardState() {
@@ -490,10 +553,6 @@ function getCardState() {
   };
 }
 
-const dbName = "CardCraftDB";
-const storeName = "cards";
-const packStore = "packs";
-
 function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(dbName, 2);
@@ -525,12 +584,19 @@ document.getElementById("saveLocal").addEventListener("click", async () => {
   const tx = db.transaction(storeName, "readwrite");
   const store = tx.objectStore(storeName);
 
+  const { c1, c2 } = getGradientStrings();
+
   const cardData = {
-    id: Date.now(),
+    id: editingCardId ? Number(editingCardId) : Date.now(),
+
     ...getCardState(),
   };
 
-  store.add(cardData);
+  // 3. Update the inner colors object properties with your newly generated strings
+  cardData.colors.color1 = c1;
+  cardData.colors.color2 = c2;
+
+  store.put(cardData);
 
   // alert("Card Saved Offline!");
   NotificationModule.notify("Success", "Card Saved Offline!", {
@@ -550,50 +616,49 @@ document.getElementById("loadCards").addEventListener("click", async () => {
 
   request.onsuccess = () => {
     // console.log(request.result);
-    window.location.href = "gallery.html";
+    window.location.href = "./components/gallery/gallery.html";
   };
 });
 
-function importCard(file) {
-  const reader = new FileReader();
+function populateEditor(data) {
+  backgroundImage = data.backgroundImage || null;
 
-  reader.onload = (e) => {
-    const data = JSON.parse(e.target.result);
+  document.getElementById("name").value = data.name || "";
+  document.getElementById("series").value = data.series || "";
+  document.getElementById("role").value = data.role || "";
+  document.getElementById("desc").value = data.desc || "";
+  document.getElementById("species").value = data.species || "";
+  document.getElementById("gender").value = data.gender || "";
+  document.getElementById("abilities").value = data.abilities || "";
 
-    backgroundImage = data.backgroundImage || null;
+  document.getElementById("rarity").value = data.rarity || "Common";
 
-    // text
-    document.getElementById("name").value = data.name;
-    document.getElementById("series").value = data.series;
-    document.getElementById("role").value = data.role;
-    document.getElementById("desc").value = data.desc;
-    document.getElementById("species").value = data.species;
-    document.getElementById("gender").value = data.gender;
-    document.getElementById("abilities").value = data.abilities;
+  document.getElementById("cardImage").src = data.image;
 
-    // image
-    document.getElementById("cardImage").src = data.image;
+  document.getElementById("color1").value = data.colors?.color1 || "#009bc2";
 
-    // styles
-    document.getElementById("color1").value = data.colors.color1;
-    document.getElementById("color2").value = data.colors.color2;
-    document.getElementById("textColor").value = data.colors.textColor;
-    document.getElementById("borderColor").value = data.colors.borderColor;
+  document.getElementById("color2").value = data.colors?.color2 || "#128779";
 
-    document.getElementById("fontSelect").value = data.font;
-    document.getElementById("templateSelect").value = data.templateId;
+  document.getElementById("textColor").value =
+    data.colors?.textColor || "#ffffff";
 
-    // re-apply UI updates
-    updateColors();
+  document.getElementById("borderColor").value =
+    data.colors?.borderColor || "#ffffff";
 
-    document.getElementById("fontSelect").dispatchEvent(new Event("change"));
+  document.getElementById("fontSelect").value = data.font;
+  document.getElementById("templateSelect").value = data.templateId;
 
-    document
-      .getElementById("templateSelect")
-      .dispatchEvent(new Event("change"));
-  };
+  // Trigger existing update handlers
 
-  reader.readAsText(file);
+  Object.keys(fields).forEach((id) => {
+    document.getElementById(id)?.dispatchEvent(new Event("input"));
+  });
+
+  updateColors();
+
+  document.getElementById("fontSelect").dispatchEvent(new Event("change"));
+
+  document.getElementById("templateSelect").dispatchEvent(new Event("change"));
 }
 
 async function loadGallery() {
@@ -722,9 +787,57 @@ backgroundDropZone.addEventListener("drop", (e) => {
   reader.readAsDataURL(file);
 });
 
+function makeSpanNumericOnly(span) {
+  // 1. Block non-numeric keystrokes
+  span.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      span.blur(); // Unfocuses the span instead of making a new line
+      return;
+    }
+
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+      "Home",
+      "End",
+    ];
+    if (allowedKeys.includes(event.key)) return;
+
+    if (!/^[0-9]$/.test(event.key)) {
+      event.preventDefault(); // Stop the key from being typed
+    }
+  });
+
+  // 2. Prevent pasting non-numeric text
+  span.addEventListener("paste", (event) => {
+    event.preventDefault();
+    const pasteData = (event.clipboardData || window.clipboardData).getData(
+      "text",
+    );
+    const cleanedData = pasteData.replace(/[^0-9]/g, "");
+    document.execCommand("insertText", false, cleanedData);
+  });
+
+  // 👇 NEW: Trigger background updates when the user types a custom percentage 👇
+  span.addEventListener("input", () => {
+    span.dataset.edited = "true"; // Mark as custom edited
+    updateColors(); // Automatically recalculate and apply the gradient background!
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const dropZone = document.getElementById("backgroundDropZone");
   const plusButton = dropZone.querySelector(".colorDesc");
+
+  // 👇 ADD THIS LOOP HERE: Hooks up your pre-existing HTML spans on startup 👇
+  const existingSpans = dropZone.querySelectorAll(".percent-span");
+  existingSpans.forEach((span) => {
+    makeSpanNumericOnly(span);
+  });
 
   // Counter to give each new gradient input a unique ID and label
   let gradientCount = 2;
@@ -739,10 +852,40 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Define the internal HTML for the new row
     newRow.innerHTML = `
             <label class="colorLabel" for="color${gradientCount}">Gradient ${gradientCount}</label>
+            <span contenteditable="true" class="percent-span">0</span>
             <input type="color" id="color${gradientCount}" value="#666666">
         `;
 
     // 3. Insert the new row just before the .colorDesc section
     dropZone.insertBefore(newRow, plusButton);
+
+    // 3.5 Listen for manual user edits on the new span
+    const newSpan = newRow.querySelector(".percent-span");
+    const newInput = newRow.querySelector('input[type="color"]');
+
+    // Apply the numeric-only lock
+    makeSpanNumericOnly(newSpan);
+
+    if (newInput) {
+      newInput.addEventListener("input", updateColors); // Connects the color slider for new boxes
+    }
+
+    newSpan.addEventListener("input", () => {
+      newSpan.dataset.edited = "true";
+    });
+
+    // 4. Select all color rows now present in the DOM
+    const allRows = dropZone.querySelectorAll(".colorRow");
+    const totalRows = allRows.length;
+
+    // 5. Loop through them and distribute percentages evenly ONLY if not edited by user
+    allRows.forEach((row, index) => {
+      const span = row.querySelector(".percent-span");
+      if (span && span.dataset.edited !== "true") {
+        const percentage =
+          totalRows > 1 ? Math.round((index / (totalRows - 1)) * 100) : 0;
+        span.textContent = percentage;
+      }
+    });
   });
 });

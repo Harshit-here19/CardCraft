@@ -90,9 +90,14 @@ body {
     font-weight: 700;
     margin-bottom: 24px;
     color: #ffffff;
+    text-align: center;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Fine, slightly transparent white line */
+    padding-bottom: 12px; /* Space between the text and the line */
 }
 
 .group {
+    position: relative;
     margin-bottom: 18px;
 }
 
@@ -115,6 +120,8 @@ body {
     color: #ffffff;
     font-size: 16px;
     transition: 0.2s;
+    /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .group input:focus,
@@ -122,6 +129,56 @@ body {
 .group select:focus {
     outline: none;
     background: #3a3a3c;
+}
+
+.select-wrapper select {
+    font-size: 14px;
+
+    /* Hides the default browser arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.select-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 67%;
+
+    /* Pure CSS Arrow: We draw a small box with a bottom/right border and rotate it 45 deg */
+    width: 8px;
+    height: 8px;
+    border-bottom: 2px solid #ffffff;
+    border-right: 2px solid #ffffff;
+
+    /* Center the element vertically and set up its baseline layout */
+    transform: translateY(-70%) rotate(45deg);
+
+    /* CRITICAL: Allows clicks to pass through the arrow directly into the select box */
+    pointer-events: none;
+
+    /* Sets up the smooth transition speed for our upcoming animation */
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+/* Change arrow color and flip it upside down when dropdown opens */
+.select-wrapper:focus-within::after {
+    border-color: #a78bfa;
+    /* Keeps the vertical alignment but flips the rotation to 225 degrees (facing up) */
+    transform: translateY(-30%) rotate(225deg);
+}
+
+/* Optional: Slight border glow for the select box itself when active */
+.select-wrapper select:focus {
+    outline: none;
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+select option {
+    font-size: 14px;
+    font-family: 'JetBrains Mono', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 textarea {
@@ -133,7 +190,7 @@ textarea {
     display: flex;
     flex-direction: row;
     gap: 12px;
-    margin-top: 30px;
+    /* margin-top: 30px; */
 }
 
 button {
@@ -209,7 +266,7 @@ button:active {
     border: 4px solid white;
     padding: 25px;
     background:
-        linear-gradient(135deg, #DC143C, #8B0000);
+        linear-gradient(135deg, #009bc2, #128779);
     box-shadow:
         0 0 50px rgba(0, 0, 0, 0.6),
         inset 0 0 30px rgba(255, 255, 255, 0.1);
@@ -340,19 +397,6 @@ button:active {
     text-align: center;
 }
 
-/* TEMPLATES */
-
-.template2 {
-    background:
-        linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-}
-
-.template3 {
-    background:
-        linear-gradient(135deg, #f7971e, #ffd200);
-    color: #111;
-}
-
 .card-container {
     width: 420px;
     min-height: 650px;
@@ -466,7 +510,7 @@ button:active {
     position: relative;
     width: 100%;
     max-width: 360px;
-    height: 125px;
+    height: 115px;
     /* Bumped slightly to perfectly frame everything */
     padding: 16px;
     background: #1c1c1e;
@@ -609,7 +653,7 @@ button:active {
    =================================================== */
 .colorBoxGroup {
     position: relative;
-    
+
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -624,8 +668,9 @@ button:active {
     /* Spacing between the two separate box units */
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 
-    max-height: 8.5rem;
+    max-height: 8rem;
     overflow-y: scroll;
+    margin-top: 10px;
 }
 
 /* Individual rows pairing label + picker */
@@ -634,8 +679,24 @@ button:active {
     align-items: center;
     justify-content: space-between;
     /* Pushes text to left, color to right */
-    padding: 14px 0;
+    padding: 12px 0;
     width: 100%;
+}
+
+.percent-span {
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+    cursor: text;
+    border-bottom: 1px dashed #7c3aed;
+    /* Gives a visual hint that it's editable */
+    padding: 0 4px;
+}
+
+.percent-span:focus {
+    outline: none;
+    background-color: rgba(124, 58, 237, 0.2);
+    /* Highlights when clicked */
+    border-radius: 4px;
 }
 
 /* Creates a clean divider line between internal items, mimicking iOS Settings rows */
@@ -643,7 +704,7 @@ button:active {
     border-bottom: 1px solid #2c2c2e;
 }
 
-.colorDesc {    
+.colorDesc {
     font-size: 12px;
     display: inline-flex;
     justify-content: space-between;
@@ -725,7 +786,7 @@ button:active {
     background: #1c1c1e;
     /* Apple System Background Secondary */
     border-radius: 16px;
-    padding: 16px;
+    padding: 8px;
     box-sizing: border-box;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
@@ -818,10 +879,32 @@ button:active {
     /* Snaps smoothly into full focus */
 }
 
+/* 1. The Full Screen Overlay (Invisible by default) */
+.backdrop-blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4); /* Subtle dark tint */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 998; /* Sits right beneath your menu items */
+    
+    opacity: 0;
+    pointer-events: none; /* Allows user clicks to pass through when hidden */
+    transition: opacity 0.3s ease;
+}
+
 /* 1. Relative wrapper that reserves actual space in your layout flow */
 .menu-container-relative {
     position: relative;
     display: inline-block;
+}
+
+/* When the menu container is hovered, instantly fade in our blur curtain */
+body:has(.floating-menu-left:hover) .backdrop-blur-overlay {
+    opacity: 1;
 }
 
 /* 2. Menu wrapper aligned to the left */
@@ -830,6 +913,7 @@ button:active {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
+    z-index: 999;
 }
 
 /* 3. Master Button - Designed like a premium pill-shaped iOS element */
@@ -889,7 +973,8 @@ button:active {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #007aff;
+    /* color: #007aff; */
+    color: #38bdf8;
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
@@ -946,9 +1031,36 @@ button:active {
     top: 100%;
     left: 0;
     width: 100%;
-    height: 16px; /* Slightly taller than your 14px gap to ensure crossover coverage */
+    height: 16px;
+    /* Slightly taller than your 14px gap to ensure crossover coverage */
     background: transparent;
-    pointer-events: auto; /* Explicitly catch pointer actions */
+    pointer-events: auto;
+    /* Explicitly catch pointer actions */
+}
+
+/* UI Feedback Press Responses */
+.menu-item:hover {
+    /* background: rgba(44, 44, 46, 0.95); */
+
+    /* iOS Blue to Purple */
+    background: linear-gradient(135deg, #007aff, #7c3aed); 
+    color: #ffffff; 
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 20px rgba(0, 122, 255, 0.45);
+}
+
+.menu-item:hover::before {
+    opacity: 1;
+
+    /* iOS Blue to Purple */
+    transform: translateX(0);
+    background: rgba(124, 58, 237, 0.95); 
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.menu-item:active,
+.master-btn:active {
+    transform: scale(0.95);
 }
 
 /* Smooth pop up stagger triggers */
@@ -1000,14 +1112,4 @@ button:active {
 .floating-menu-left:hover .master-btn .icon {
     transform: rotate(135deg);
     /* Flips "+" to "x" */
-}
-
-/* UI Feedback Press Responses */
-.menu-item:hover {
-    background: rgba(44, 44, 46, 0.95);
-}
-
-.menu-item:active,
-.master-btn:active {
-    transform: scale(0.95);
 }

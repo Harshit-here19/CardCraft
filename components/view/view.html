@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Card View</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="stylesheet" href="./view.css" />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500&family=Cinzel:wght@600&display=swap"
+        rel="stylesheet" />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Orbitron:wght@500;700&family=Cinzel:wght@600&family=Cinzel+Decorative:wght@700&family=Inter:wght@400;700&family=Share+Tech+Mono&family=Rajdhani:wght@600&family=Playfair+Display:ital,wght@0,600;1,600&family=Bangers&family=Permanent+Marker&family=Anton&family=Press+Start+2P&display=swap"
+        rel="stylesheet" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+    <button id="backBtn" class="back-btn">← Back</button>
+    <div id="imageOverlay" class="overlay hidden">
+        <img id="overlayImg" />
+    </div>
+    <div id="viewRoot"></div>
+    <!-- <button id="exportBtn" class="expo-btn">Export Card</button> -->
+    <div class="buttonBox">
+        <button id="exportBtn" class="btn-ios-import variant-white">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M19.41 7.41l-4.83-4.83c-.37-.37-.88-.58-1.41-.58H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8.83c0-.53-.21-1.04-.59-1.42zM14 4.5l3.5 3.5H14V4.5zM6 20V4h6v5c0 .55.45 1 1 1h5v10H6z" />
+            </svg>
+            Export
+        </button>
+        <button id="saveImage" class="btn-ios-import variant-black">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M19.41 7.41l-4.83-4.83c-.37-.37-.88-.58-1.41-.58H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8.83c0-.53-.21-1.04-.59-1.42zM14 4.5l3.5 3.5H14V4.5zM6 20V4h6v5c0 .55.45 1 1 1h5v10H6z" />
+            </svg>
+            PNG
+        </button>
+        <button id="editCardBtn" class="btn-ios-import variant-glass">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
+            </svg>
+            Edit
+        </button>
+    </div>
+
+    <script src="../../assests/Notification/modalModule.js"></script>
+    <script src="./view.js"></script>
+</body>
+
+</html>
