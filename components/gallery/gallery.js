@@ -271,15 +271,75 @@ async function importCards(e) {
   });
 
   tx.oncomplete = () => {
-    let message = "Cards imported successfully!";
+    const totalSkipped = skippedCards.length;
 
-    if (skippedCards.length > 0) {
-      message += "\n\nDuplicate cards not added:\n\n" + skippedCards.join("\n");
-    }
+    const message = `
+      <div style="
+        font-family: monospace;
+        color: #e5e5e5;
+        line-height: 1.5;
+      ">
 
-    //alert(message);
+        <!-- STATUS -->
+        <div style="
+          font-size: 14px;
+          font-weight: 700;
+          color: #00ffc3;
+          margin-bottom: 10px;
+        ">
+          ✔ Cards imported successfully!
+        </div>
 
-    ModalModule.open("Duplicates!", message);
+        <!-- SKIPPED STATE -->
+        ${
+          totalSkipped > 0
+            ? `
+          <div style="
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffcc00;
+            margin-bottom: 6px;
+          ">
+            ⚠ Duplicate cards not added (${totalSkipped})
+          </div>
+
+          <div style="
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.2);
+            font-size: 12px;
+          ">
+            ${skippedCards
+              .map(
+                (item) => `
+                <div style="
+                  padding: 4px 0;
+                  border-bottom: 1px solid rgba(255,255,255,0.05);
+                ">
+                  ${item}
+                </div>
+              `
+              )
+              .join("")}
+          </div>
+          `
+            : `
+          <div style="
+            font-size: 13px;
+            color: #aaa;
+          ">
+            No duplicates found 🎉
+          </div>
+          `
+        }
+
+      </div>
+    `;
+
+    ModalModule.open("Import Complete", message);
 
     loadGallery();
   };

@@ -1,5 +1,5 @@
 // 1. INCREMENT THIS VERSION NUMBER WHENEVER YOU UPDATE YOUR CODE
-const CACHE_NAME = "CardCraft-v5.0"; 
+const CACHE_NAME = "CardCraft-v5.1"; 
 
 const urlsToCache = [
   "./",

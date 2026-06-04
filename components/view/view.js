@@ -34,6 +34,9 @@ async function loadView() {
     const card = req.result;
     if (!card) return;
 
+    // console.log(card.name)
+    document.title = card.name || "View"
+
     currentCard = card;
 
     const template = templates.find((t) => t.id === card.templateId);
@@ -85,41 +88,24 @@ async function loadView() {
     const overlayImg = document.getElementById("overlayImg");
 
     img.addEventListener("click", () => {
-      const rect = img.getBoundingClientRect();
+      overlayImg.src = img.src;
 
       overlay.classList.remove("hidden");
 
-      overlayImg.src = img.src;
-
-      // set initial position EXACTLY over original image
-      overlayImg.style.width = rect.width + "px";
-      overlayImg.style.height = rect.height + "px";
-      overlayImg.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1)`;
-
-      // force render
+      // force reflow
       overlayImg.getBoundingClientRect();
 
-      // target fullscreen center
-      const targetWidth = window.innerWidth * 0.9;
-      const scale = 1.5 || targetWidth / rect.width;
-
-      const targetX = (window.innerWidth - rect.width * scale) / 2;
-      const targetY = (window.innerHeight - rect.height * scale) / 2;
-
-      requestAnimationFrame(() => {
-        overlayImg.style.transform = `translate(${targetX}px, ${targetY}px) scale(${scale})`;
-      });
+      overlay.classList.add("show");
     });
 
     overlay.addEventListener("click", (e) => {
       if (e.target !== overlayImg) {
-        const rect = img.getBoundingClientRect();
-
-        overlayImg.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(1)`;
+        overlay.classList.remove("show");
 
         setTimeout(() => {
           overlay.classList.add("hidden");
-        }, 450);
+          overlayImg.src = "";
+        }, 300);
       }
     });
 
@@ -277,16 +263,10 @@ document.getElementById("saveImage").addEventListener("click", async () => {
 /* EDIT CARD */
 /* ========================= */
 
-document
-  .getElementById("editCardBtn")
-  .addEventListener("click", () => {
+document.getElementById("editCardBtn").addEventListener("click", () => {
+  const params = new URLSearchParams(window.location.search);
 
-    const params = new URLSearchParams(
-      window.location.search
-    );
+  const id = params.get("id");
 
-    const id = params.get("id");
-
-    window.location.href =
-      `../../index.html?edit=${id}`;
+  window.location.href = `../../index.html?edit=${id}`;
 });
