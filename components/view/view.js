@@ -3,7 +3,7 @@ const dbName = "CardCraftDB";
 let templates = [];
 let currentCard = null;
 
-fetch("templates.json")
+fetch("../../assests/templates.json")
   .then((res) => res.json())
   .then((data) => {
     templates = data.templates;
@@ -35,18 +35,27 @@ async function loadView() {
     if (!card) return;
 
     // console.log(card.name)
-    document.title = card.name || "View"
+    document.title = card.name || "View";
 
     currentCard = card;
 
     const template = templates.find((t) => t.id === card.templateId);
 
+    const color1 = card?.colors?.color1;
+    const color2 = card?.colors?.color2;
+
+    // Check if both colors exist and are exactly white (handling both lowercase and uppercase hex)
+    const isBothWhite =
+      color1?.toLowerCase() === "#ffffff" &&
+      color2?.toLowerCase() === "#ffffff";
+
     const gradient = card?.backgroundImage
       ? `url(${card.backgroundImage}) center/cover no-repeat`
-      : card?.colors?.color1
+      : card?.colors?.color1 && !isBothWhite // Only use card colors if they exist AND aren't both white
         ? `linear-gradient(135deg, ${card.colors.color1}, ${card?.colors?.color2 || card.colors.color1})`
-        : template?.background || "linear-gradient(135deg, #111, #222)";
-    const textColor = card?.colors.textColor || template?.textColor || "#fff";
+        : template?.background || "linear-gradient(135deg, #11111100, #22222200)";
+
+    const textColor = card?.colors?.textColor || template?.textColor || "#fff";
     const font = card?.font || template?.font || "Poppins";
     const shadow = template?.cardShadow || "none";
 

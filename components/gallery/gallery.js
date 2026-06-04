@@ -4,7 +4,7 @@ const storeName = "cards";
 // In Deployement Enables this
 let templates = [];
 
-fetch("templates.json")
+fetch("../../assests/templates.json")
   .then((res) => res.json())
   .then((data) => {
     templates = data.templates;
@@ -102,17 +102,29 @@ function renderCard(cardData) {
             x
         </button>
         <div class="anime-card mini-card" style="
-            background: ${
-              cardData?.backgroundImage
-                ? `url(${cardData.backgroundImage}) center/cover no-repeat`
-                : cardData?.colors?.color1
-                  ? `linear-gradient(135deg, ${cardData.colors.color1}, ${cardData?.colors?.color2 || cardData.colors.color1})`
-                  : template?.background
-            };
-            color:${template?.textColor};
-            border-color:${template?.borderColor};
-            font-family:${template?.font};
-            box-shadow:${template?.cardShadow};
+            background: ${(() => {
+              if (cardData?.backgroundImage) {
+                return `url(${cardData.backgroundImage}) center/cover no-repeat`;
+              }
+
+              const c1 = cardData?.colors?.color1;
+              const c2 = cardData?.colors?.color2;
+              const isBothWhite =
+                c1?.toLowerCase() === "#ffffff" &&
+                c2?.toLowerCase() === "#ffffff";
+
+              if (c1 && !isBothWhite) {
+                return `linear-gradient(135deg, ${c1}, ${c2 || c1})`;
+              }
+
+              return (
+                template?.background || "linear-gradient(135deg, #ffffff45, #ffffff45)"
+              );
+            })()};
+            color: ${cardData?.colors?.textColor || template?.textColor || "#fff"};
+            border-color: ${template?.borderColor || "transparent"};
+            font-family: ${cardData?.font || template?.font || "Poppins"};
+            box-shadow: ${template?.cardShadow || "none"};
         ">
             
             <div class="shine"></div>
@@ -209,6 +221,8 @@ async function exportCards() {
     a.click();
 
     URL.revokeObjectURL(url);
+
+    NotificationModule.notify("Sucess", "Export Completed!!")
   };
 }
 
@@ -219,15 +233,54 @@ document.getElementById("importFile").addEventListener("change", importCards);
 async function importCards(e) {
   const file = e.target.files[0];
 
+  // 1. Verify file extension
+  if (!file.name.endsWith(".cardcraft")) {
+    ModalModule.open(
+      "Import Failed",
+      `<div style="font-family: monospace; color: #ff4a4a; font-size: 13px;">
+        ❌ Invalid file format! Please upload a file with the <strong>.cardcraft</strong> extension.
+       </div>`,
+    );
+    e.target.value = "";
+    return;
+  }
+
   if (!file) return;
 
   const text = await file.text();
 
   // const cards = JSON.parse(text);
-  let cards = JSON.parse(text);
+  let cards;
+  try {
+    cards = JSON.parse(text);
+  } catch (error) {
+    NotificationModule.notify("Error", error.message, { type: "error" });
+  }
 
   if (!Array.isArray(cards)) {
     cards = cards.card ? [cards.card] : [cards];
+  }
+
+  // 2. Verify internal card data structure
+  const isValidStructure =
+    cards.length > 0 &&
+    cards.every(
+      (card) =>
+        card &&
+        card.name !== undefined &&
+        card.series !== undefined &&
+        card.role !== undefined,
+    );
+
+  if (!isValidStructure || cards.length === 0) {
+    ModalModule.open(
+      "Import Failed",
+      `<div style="font-family: monospace; color: #ff4a4a; font-size: 13px;">
+        ❌ Validation failed! The .cardcraft file does not contain valid card data.
+       </div>`,
+    );
+    e.target.value = "";
+    return;
   }
 
   const db = await openDB();
@@ -243,31 +296,37 @@ async function importCards(e) {
     req.onerror = () => reject(req.error);
   });
 
+  const existingSet = new Set(
+    existingCards.map(
+      (card) =>
+        `${(card.name || "").trim().toLowerCase()}|` +
+        `${(card.series || "").trim().toLowerCase()}|` +
+        `${(card.role || "").trim().toLowerCase()}`,
+    ),
+  );
+
   const skippedCards = [];
+
+  const cardsToImport = cards.filter((card) => {
+    const key =
+      `${(card.name || "").trim().toLowerCase()}|` +
+      `${(card.series || "").trim().toLowerCase()}|` +
+      `${(card.role || "").trim().toLowerCase()}`;
+
+    if (existingSet.has(key)) {
+      skippedCards.push(`${card.name} (${card.series} - ${card.role})`);
+      return false;
+    }
+
+    existingSet.add(key); // prevents duplicates inside import file too
+    return true;
+  });
 
   const tx = db.transaction(storeName, "readwrite");
   const store = tx.objectStore(storeName);
 
-  cards.forEach((card) => {
-    const duplicate = existingCards.some((existing) => {
-      return (
-        (existing.name || "").trim().toLowerCase() ===
-          (card.name || "").trim().toLowerCase() &&
-        (existing.series || "").trim().toLowerCase() ===
-          (card.series || "").trim().toLowerCase() &&
-        (existing.role || "").trim().toLowerCase() ===
-          (card.role || "").trim().toLowerCase()
-      );
-    });
-
-    if (duplicate) {
-      skippedCards.push(`${card.name} (${card.series} - ${card.role})`);
-    } else {
-      store.put(card);
-
-      // Prevent duplicates within the same imported file
-      existingCards.push(card);
-    }
+  cardsToImport.forEach((card) => {
+    store.put(card);
   });
 
   tx.oncomplete = () => {
@@ -321,7 +380,7 @@ async function importCards(e) {
                 ">
                   ${item}
                 </div>
-              `
+              `,
               )
               .join("")}
           </div>

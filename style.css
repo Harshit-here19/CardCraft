@@ -92,8 +92,10 @@ body {
     color: #ffffff;
     text-align: center;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Fine, slightly transparent white line */
-    padding-bottom: 12px; /* Space between the text and the line */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    /* Fine, slightly transparent white line */
+    padding-bottom: 12px;
+    /* Space between the text and the line */
 }
 
 .group {
@@ -266,7 +268,7 @@ button:active {
     border: 4px solid white;
     padding: 25px;
     background:
-        linear-gradient(135deg, #009bc2, #128779);
+        linear-gradient(135deg, #ffffff00, #ffffff00);
     box-shadow:
         0 0 50px rgba(0, 0, 0, 0.6),
         inset 0 0 30px rgba(255, 255, 255, 0.1);
@@ -690,6 +692,38 @@ button:active {
     border-bottom: 1px dashed #7c3aed;
     /* Gives a visual hint that it's editable */
     padding: 0 4px;
+
+    position: relative;
+    cursor: pointer;
+}
+
+/* Hide the tooltip by default */
+.percent-span::after {
+    content: attr(data-tooltip);
+    /* Pulls text from the data attribute */
+    position: absolute;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* --- Your Custom Styling Here --- */
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* Smooth Fade-in Effect */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Show the tooltip on hover */
+.percent-span:hover::after {
+    opacity: 1;
 }
 
 .percent-span:focus {
@@ -730,6 +764,72 @@ button:active {
     color: #ffffff;
     user-select: none;
     cursor: pointer;
+}
+
+.opacityInput {
+    width: 32px;
+    border: none;
+    background: transparent;
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+    cursor: text;
+    border-bottom: 1px dashed #7c3aed;
+    padding: 0 4px;
+
+    /* For Firefox */
+    -moz-appearance: textfield;
+
+    position: relative;
+    cursor: pointer;
+}
+
+.opacityWrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.opacityWrapper::after {
+    content: attr(data-tooltip);
+    /* Pulls text from the data attribute */
+    position: absolute;
+    top: 125%;
+    right: -300%;
+    transform: translateX(-50%);
+
+    /* --- Your Custom Styling Here --- */
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* Smooth Fade-in Effect */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Show the tooltip on hover */
+.opacityWrapper:hover::after {
+    opacity: 1;
+}
+
+/* Removes the weird border/outline when you click into it */
+.opacityInput:focus {
+    outline: none;
+    border-bottom: 1px solid #f1f1f1;
+    /* Adds a clean underline only when active */
+}
+
+/* Removes spinners */
+.opacityInput::-webkit-outer-spin-button,
+.opacityInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* ===================================================
@@ -886,13 +986,16 @@ button:active {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4); /* Subtle dark tint */
+    background: rgba(0, 0, 0, 0.4);
+    /* Subtle dark tint */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    z-index: 998; /* Sits right beneath your menu items */
-    
+    z-index: 998;
+    /* Sits right beneath your menu items */
+
     opacity: 0;
-    pointer-events: none; /* Allows user clicks to pass through when hidden */
+    pointer-events: none;
+    /* Allows user clicks to pass through when hidden */
     transition: opacity 0.3s ease;
 }
 
@@ -1043,8 +1146,8 @@ body:has(.floating-menu-left:hover) .backdrop-blur-overlay {
     /* background: rgba(44, 44, 46, 0.95); */
 
     /* iOS Blue to Purple */
-    background: linear-gradient(135deg, #007aff, #7c3aed); 
-    color: #ffffff; 
+    background: linear-gradient(135deg, #007aff, #7c3aed);
+    color: #ffffff;
     border-color: rgba(255, 255, 255, 0.35);
     box-shadow: 0 0 20px rgba(0, 122, 255, 0.45);
 }
@@ -1054,7 +1157,7 @@ body:has(.floating-menu-left:hover) .backdrop-blur-overlay {
 
     /* iOS Blue to Purple */
     transform: translateX(0);
-    background: rgba(124, 58, 237, 0.95); 
+    background: rgba(124, 58, 237, 0.95);
     border-color: rgba(255, 255, 255, 0.2);
 }
 

@@ -198,14 +198,22 @@
             <div class="colorBoxGroup" id="backgroundDropZone">
                 <div class="colorRow">
                     <label class="colorLabel" for="color1">Gradient 1</label>
-                    <span contenteditable="true" class="percent-span">0</span>
-                    <input type="color" id="color1" value="#009bc2">
+                    <span contenteditable="true" class="percent-span" data-tooltip="Gradient Percentage">0</span>
+                    <input type="color" id="color1" value="#ffffff">
+
+                    <!-- Small opacity field -->
+                    <div class="opacityWrapper" data-tooltip="Opacity Percentage">
+                        <input type="number" class="opacityInput" id="opacity1" min="0" max="100" value="0">
+                    </div>
                 </div>
 
                 <div class="colorRow">
                     <label class="colorLabel" for="color2">Gradient 2</label>
                     <span contenteditable="true" class="percent-span">100</span>
-                    <input type="color" id="color2" value="#128779">
+                    <input type="color" id="color2" value="#ffffff">
+
+                    <!-- Small opacity field -->
+                    <input type="number" class="opacityInput" id="opacity1" min="0" max="100" value="0">
                 </div>
 
                 <div class="colorDesc">
@@ -303,7 +311,7 @@
     </div>
 
     <script src="./assests/Notification/notification.js"></script>
-    <script src="./script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 

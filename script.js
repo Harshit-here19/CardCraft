@@ -22,8 +22,7 @@ if (editingCardId) {
 }
 
 if (editingCardId) {
-    document.getElementById("saveLocal").innerText =
-        "Update";
+  document.getElementById("saveLocal").innerText = "Update";
 }
 
 async function loadCardForEditing(cardId) {
@@ -47,7 +46,7 @@ async function loadCardForEditing(cardId) {
 let templates = [];
 let backgroundImage = null;
 
-fetch("templates.json")
+fetch("./assests/templates.json")
   .then((res) => res.json())
   .then((data) => {
     templates = data.templates;
@@ -207,8 +206,19 @@ function getGradientStrings() {
   const colorValues = Array.from(colorRows).map((row) => {
     const input = row.querySelector('input[type="color"]');
     const span = row.querySelector("span");
+    const opacityInput = row.querySelector(".opacityInput");
 
-    const hex = input ? input.value : "#000000";
+    let hex = input ? input.value : "#000000";
+
+    const opacity = opacityInput ? parseInt(opacityInput.value, 10) : 100;
+
+    const alpha = Math.round((opacity / 100) * 255)
+      .toString(16)
+      .padStart(2, "0")
+      .toUpperCase();
+
+    hex += alpha;
+
     // Get the percentage text. If the span has just "50", we append "%".
     let percent = span ? span.textContent.trim() : "0";
     if (!percent.includes("%")) {
@@ -851,10 +861,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. Define the internal HTML for the new row
     newRow.innerHTML = `
-            <label class="colorLabel" for="color${gradientCount}">Gradient ${gradientCount}</label>
-            <span contenteditable="true" class="percent-span">0</span>
-            <input type="color" id="color${gradientCount}" value="#666666">
-        `;
+        <label class="colorLabel" for="color${gradientCount}">
+            Gradient ${gradientCount}
+        </label>
+
+        <span contenteditable="true" class="percent-span">0</span>
+
+        <input type="color" id="color${gradientCount}" value="#ffffff">
+
+        <input
+            type="number"
+            class="opacityInput"
+            id="opacity${gradientCount}"
+            min="0"
+            max="100"
+            value="0"
+        >
+    `;
 
     // 3. Insert the new row just before the .colorDesc section
     dropZone.insertBefore(newRow, plusButton);
